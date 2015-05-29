@@ -1,0 +1,11 @@
+---
+layout: post
+title:  1988 Chevy Blazer
+year: 1988
+make: Chevrolet
+model: Blazer
+date:   2015-05-28
+categories: one two
+---
+
+the post details go here
