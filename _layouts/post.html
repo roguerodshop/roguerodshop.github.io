@@ -5,10 +5,19 @@ layout: default
 
   <header class="post-header">
     <h1 class="post-title">{{ page.title }}</h1>
-    <p class="post-meta">{{ page.date | date: "%b %-d, %Y" }}{% if page.author %} • {{ page.author }}{% endif %}{% if page.meta %} • {{ page.meta }}{% endif %}</p>
   </header>
 
   <article class="post-content">
+    {% assign imgNameStart = page.id | remove: page.dir | remove: "/" %}
+    {% assign imgBasePath = imgNameStart | prepend: "/images/" %}
+
+    <div id='slick-carousel' data-slick='{"slidesToShow": 3, "slidesToScroll": 1}'>
+    {% for img in site.static_files %}
+      {% if img.path contains imgBasePath %}
+        <div><img src="{{ site.baseurl }}{{ img.path }}"></div>
+      {% endif %}
+    {% endfor %}
+    </div>
     {{ content }}
   </article>
 

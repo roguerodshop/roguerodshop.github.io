@@ -1,11 +1,11 @@
 ---
 layout: post
-title:  1988 Chevy Blazer
-year: 1988
+title:  1978 Chevy Blazer
+year: 1978
 make: Chevrolet
 model: Blazer
 date:   2015-05-28
-categories: one two
+categories: current_projects
 ---
 
 the post details go here
