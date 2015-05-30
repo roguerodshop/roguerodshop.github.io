@@ -1,6 +1,10 @@
 # Site settings
 title: Rogue Rod Shop
+name: Marty Hooper
+number: 503-867-6031
 email: roguerodshop@gmail.com
+street_address: 26110 S Highway 170
+city_state_zip: Canby, OR 97013
 description: >
   TBD
 baseurl: "" # the subpath of your site, e.g. /blog/
