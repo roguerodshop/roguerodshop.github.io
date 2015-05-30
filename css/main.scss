@@ -22,10 +22,10 @@ $grey-color-light: lighten($grey-color, 40%);
 $grey-color-dark:  darken($grey-color, 25%);
 
 // Width of the content area
-$content-width:    800px;
+$content-width:    860px;
 
-$on-palm:          600px;
-$on-laptop:        800px;
+$on-palm:          860px;
+$on-laptop:        860px;
 
 
 
@@ -51,6 +51,7 @@ $on-laptop:        800px;
         "syntax-highlighting"
 ;
 
+// footer contact info
 @import url("http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css");
 body {font-family: "Segoe UI", Tahoma, sans-serif;}
 .fa:before {display: inline-block;}
@@ -63,3 +64,7 @@ body {font-family: "Segoe UI", Tahoma, sans-serif;}
 .contact p {text-align: center;}
 .contact {display: inline-block; margin: 0 auto; padding-left: 0;}
 .container {text-align: center;}
+
+#map-canvas {
+  margin: 0 auto;
+}
