@@ -4,16 +4,22 @@
     <div class="container">
       <ul class="contact">
         <li style="text-align: left;">
-          <p><i class="fa fa-phone fa-3x"></i></p>
-          <p><strong>Cell:</strong></br>{{ site.number }}</br>&nbsp;</br></p>
+          <a href="tel://1-{{ site.number }}">
+            <p><i class="fa fa-phone fa-3x"></i></p>
+            <p><strong>Cell:</strong></br>{{ site.number }}</br>&nbsp;</br></p>
+          </a>
         </li>
         <li style="text-align: left;">
-          <p><i class="fa fa-map-marker fa-3x"></i></p>
-          <p><strong>Address</strong></br>{{ site.street_address }}</br>{{ site.city_state_zip }}</p>
+          <a href="/contact/">
+            <p><i class="fa fa-map-marker fa-3x"></i></p>
+            <p><strong>Address</strong></br>{{ site.street_address }}</br>{{ site.city_state_zip }}</p>
+          </a>
         </li>
         <li style="text-align: left;">
-          <p><i class="fa fa-envelope fa-3x"></i></p>
-          <p><strong>E-mail:</strong></br>{{ site.email }}</br>&nbsp;</br></p>
+          <a href="mailto:{{ site.email }}">
+            <p><i class="fa fa-envelope fa-3x"></i></p>
+            <p><strong>E-mail:</strong></br>{{ site.email }}</br>&nbsp;</br></p>
+          </a>
         </li>
       </ul>
     </div>
