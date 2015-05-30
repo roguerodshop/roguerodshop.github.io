@@ -11,13 +11,13 @@ layout: default
     {% assign imgNameStart = page.id | remove: page.dir | remove: "/" %}
     {% assign imgBasePath = imgNameStart | prepend: "/images/" %}
 
-    <div id='slick-carousel' data-slick='{"slidesToShow": 3, "slidesToScroll": 1}'>
-    {% for img in site.static_files %}
-      {% if img.path contains imgBasePath %}
-        <div><img src="{{ site.baseurl }}{{ img.path }}"></div>
-      {% endif %}
-    {% endfor %}
-    </div>
+    <ul class="pgwSlideshow">
+      {% for img in site.static_files %}
+        {% if img.path contains imgBasePath %}
+          <li><img src="{{ site.baseurl }}{{ img.path }}"></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
     {{ content }}
   </article>
 

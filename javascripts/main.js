@@ -1,3 +1,3 @@
-$(document).on('ready', function() {
-    $('#slick-carousel').slick();
+$(document).ready(function() {
+    $('.pgwSlideshow').pgwSlideshow();
 });
