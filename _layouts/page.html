@@ -11,18 +11,29 @@ layout: default
     {{ content }}
   </article>
 
-  <ul class="post-list">
+  <div class="row">
     {% assign category = page.permalink | remove: "/" %}
     {% for post in site.posts %}
       {% if post.categories contains category %}
-        <li>
-          <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
-          <h2>
-            <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-          </h2>
-        </li>
+        {% assign imgNameStart = "-1" | prepend: post.id | remove: post.dir | remove: "/" %}
+        {% assign imgBasePath = imgNameStart | prepend: "/images/" %}
+        <div class="col-md-4 portfolio-item">
+            <a href="{{ post.url | prepend: site.baseurl }}">
+              {% for img in site.static_files %}
+                {% if img.path contains imgBasePath %}
+                  <img src="{{ site.baseurl }}{{ img.path }}">
+                {% endif %}
+              {% endfor %}
+            </a>
+            <h3>
+              <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+            </h3>
+        </div>
       {% endif %}
     {% endfor %}
-  </ul>
+  </div>
 
 </div>
+
+
+<!-- Projects Row -->
