@@ -29,6 +29,8 @@ def add_posting
   model = gets.chomp
   puts 'mileage:'
   mileage = gets.chomp
+  puts 'price:'
+  price = gets.chomp
   puts 'categories:'
   categories = validate_categories(gets.chomp)
   puts 'description:'
@@ -36,7 +38,7 @@ def add_posting
   puts 'Is all of the information above correct and photos staged? [yes/no]'
   if gets.chomp.downcase[0] == 'y'
     stage_photos(dashed_title)
-    write_post(dashed_title, title, year, make, model, mileage, categories, description)
+    write_post(dashed_title, title, year, make, model, mileage, price, categories, description)
   end
 end
 
@@ -66,7 +68,7 @@ def stage_photos(dashed_title)
   end
 end
 
-def write_post(dashed_title, title, year, make, model, mileage, categories, description)
+def write_post(dashed_title, title, year, make, model, mileage, price, categories, description)
   date_str = Time.now.strftime("%Y-%m-%d")
   new_post = "#{PROJECT_ROOT}_posts/#{date_str}-#{dashed_title}.markdown"
   content = [
@@ -76,7 +78,8 @@ def write_post(dashed_title, title, year, make, model, mileage, categories, desc
     "year: #{year}",
     "make: #{make}",
     "model: #{model}",
-    "mileage: #{mileage}"
+    "mileage: #{mileage}",
+    "price: #{price}",
     "date: #{date_str}",
     "categories: #{categories}",
     '---',
