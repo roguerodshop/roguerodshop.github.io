@@ -1,0 +1,94 @@
+#!/usr/bin/env ruby
+require 'colorize'
+
+$HOME = %x(echo $HOME).chomp
+PROJECT_ROOT = $HOME + '/rrs/'
+
+selections = [
+  'Add a new post',
+  'Edit an existing post',
+  'Remove an existing post',
+  'Add or remove photos from an existing post',
+  'Deploy the website'
+]
+
+puts 'What would you like to do?'
+selections.each_with_index { |s,i| puts "#{i+1}: #{s}" }
+
+selection = gets.chomp.to_i
+
+def add_posting
+  puts 'title:'
+  title = gets.chomp
+  dashed_title = title.gsub(/\s/,'-').gsub(/[^A-Za-z0-9_-]/,'').downcase
+  puts 'year:'
+  year = gets.chomp
+  puts 'make:'
+  make = gets.chomp
+  puts 'model:'
+  model = gets.chomp
+  puts 'mileage:'
+  mileage = gets.chomp
+  puts 'categories:'
+  categories = validate_categories(gets.chomp)
+  puts 'description:'
+  description = gets.chomp
+  puts 'Is all of the information above correct and photos staged? [yes/no]'
+  if gets.chomp.downcase[0] == 'y'
+    stage_photos(dashed_title)
+    write_post(dashed_title, title, year, make, model, mileage, categories, description)
+  end
+end
+
+def validate_categories(categories)
+  valid_categories = Dir[PROJECT_ROOT + '*'].map do |f|
+    md = f.match(/\d_(.*)\.md/)
+    md ? md[1] : nil
+  end.compact
+  valid_categories << 'unpublished'
+  attempted_categories = categories.gsub(/,\s*/,',').split(',').map { |cat| cat.gsub(/\s/,'_') }
+  if (valid_categories & attempted_categories).length == attempted_categories.length
+    attempted_categories.join(' ')
+  else
+    puts 'Your categories aren\'t valid.'
+    puts 'If you are using two or more categories, they must be seperated by a space'
+    puts "Valid categories are: " + "#{valid_categories.join(', ').gsub('_', ' ')}".colorize(:green)
+    puts 'Try again'
+    validate_categories(gets.chomp)
+  end
+end
+
+def stage_photos(dashed_title)
+  staging_dir = $HOME + '/Desktop/rrs_staging/'
+  Dir[staging_dir + '*'].each_with_index do |f,i|
+    ext = f.match(/(\..*)$/)
+    File.rename(f, "#{PROJECT_ROOT}images/#{dashed_title}-#{i+1}#{ext}" )
+  end
+end
+
+def write_post(dashed_title, title, year, make, model, mileage, categories, description)
+  date_str = Time.now.strftime("%Y-%m-%d")
+  new_post = "#{PROJECT_ROOT}_posts/#{date_str}-#{dashed_title}.markdown"
+  content = [
+    '---',
+    'layout: post',
+    "title: #{title}",
+    "year: #{year}",
+    "make: #{make}",
+    "model: #{model}",
+    "mileage: #{mileage}"
+    "date: #{date_str}",
+    "categories: #{categories}",
+    '---',
+    description
+  ].join("\n")
+  File.open(new_post, "w") do |file|
+    file.write(content)
+  end
+end
+
+if selection == 1
+  add_posting
+elsif selection == 2
+elsif selection == 3
+end
