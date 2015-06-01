@@ -1,0 +1,13 @@
+---
+layout: post
+categories: projects_for_sale
+title: the title
+details:
+  date: 2015-06-01
+  year: 
+  make: 
+  model: 
+  mileage: 
+  price: 
+---
+no description

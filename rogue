@@ -1,8 +1,11 @@
 #!/usr/bin/env ruby
+
+# ln -s $HOME/rrs/rogue /usr/local/bin/rogue
+
 require 'colorize'
 
-$HOME = %x(echo $HOME).chomp
-PROJECT_ROOT = $HOME + '/rrs/'
+HOME = %x(echo $HOME).chomp
+PROJECT_ROOT = HOME + '/rrs/'
 
 selections = [
   'Add a new post',
@@ -18,27 +21,54 @@ selections.each_with_index { |s,i| puts "#{i+1}: #{s}" }
 selection = gets.chomp.to_i
 
 def add_posting
-  puts 'title:'
-  title = gets.chomp
+  details = { year: nil, make: nil, model: nil, mileage: nil, price: nil, categories: nil }
+  title = ask_question(:title,true)
   dashed_title = title.gsub(/\s/,'-').gsub(/[^A-Za-z0-9_-]/,'').downcase
-  puts 'year:'
-  year = gets.chomp
-  puts 'make:'
-  make = gets.chomp
-  puts 'model:'
-  model = gets.chomp
-  puts 'mileage:'
-  mileage = gets.chomp
-  puts 'price:'
-  price = gets.chomp
-  puts 'categories:'
-  categories = validate_categories(gets.chomp)
-  puts 'description:'
-  description = gets.chomp
-  puts 'Is all of the information above correct and photos staged? [yes/no]'
-  if gets.chomp.downcase[0] == 'y'
-    stage_photos(dashed_title)
-    write_post(dashed_title, title, year, make, model, mileage, price, categories, description)
+  details.each do |question, _answer|
+    answer = ask_question(question,true)
+  end
+  description = ask_question(:description)
+  ask_question('Is all of the information above correct and photos staged? [yes/no]')
+  puts details
+  # if gets.chomp.downcase[0] == 'y'
+  #   stage_photos(dashed_title)
+  #   write_post(title, details, description)
+  # else
+  #   add_posting
+  # end
+end
+
+def ask_question(question,confirm=false)
+  puts question.to_s.gsub('_',' ') << ':'
+  answer = validate(question, gets.chomp)
+  puts "\nFormatted to: #{answer.to_s.colorize(:red)}\n\n" if confirm && !answer.nil?
+  answer
+end
+
+def validate(question, answer)
+  if [:title].include? question
+    if answer.empty?
+      puts "You need to have a #{question}"
+      ask_question(question)
+    end
+  else
+    return nil if answer.empty?
+  end
+  case question
+  when :year
+    return answer if answer.match(/^((20)|1(8|9))\d{2}(\.\d{1,2})?$/) && (answer.to_i <= Time.now.strftime('%Y').to_i + 2)
+    puts 'That\'s not a valid date. Try agian.'
+    ask_question(:year)
+  when [:title, :make, :model].include?(question) ? question : false
+    answer.gsub(/\s+/, ' ').split(' ').map { |w| w.capitalize }.join(' ')
+  when :mileage
+    "#{answer.gsub(/\.\d*/, '').gsub(/(k|k)/,'000').gsub(/\D/,'').reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse} miles"
+  when :price
+    "$#{answer.gsub(/\.\d*/, '').gsub(/\D/,'').reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse}"
+  when :categories
+    validate_categories(answer)
+  else
+    answer
   end
 end
 
@@ -49,7 +79,7 @@ def validate_categories(categories)
   end.compact
   valid_categories << 'unpublished'
   attempted_categories = categories.gsub(/,\s*/,',').split(',').map { |cat| cat.gsub(/\s/,'_') }
-  if (valid_categories & attempted_categories).length == attempted_categories.length
+  if !attempted_categories.empty? && (valid_categories & attempted_categories).length == attempted_categories.length
     attempted_categories.join(' ')
   else
     puts 'Your categories aren\'t valid.'
@@ -61,27 +91,28 @@ def validate_categories(categories)
 end
 
 def stage_photos(dashed_title)
-  staging_dir = $HOME + '/Desktop/rrs_staging/'
+  staging_dir = HOME + '/Desktop/rrs_staging/'
   Dir[staging_dir + '*'].each_with_index do |f,i|
     ext = f.match(/(\..*)$/)
     File.rename(f, "#{PROJECT_ROOT}images/#{dashed_title}-#{i+1}#{ext}" )
   end
 end
 
-def write_post(dashed_title, title, year, make, model, mileage, price, categories, description)
+def write_post(title, details)
   date_str = Time.now.strftime("%Y-%m-%d")
   new_post = "#{PROJECT_ROOT}_posts/#{date_str}-#{dashed_title}.markdown"
   content = [
     '---',
     'layout: post',
-    "title: #{title}",
-    "year: #{year}",
-    "make: #{make}",
-    "model: #{model}",
-    "mileage: #{mileage}",
-    "price: #{price}",
-    "date: #{date_str}",
     "categories: #{categories}",
+    "title: #{title}",
+    'details:',
+    "\s\sdate: #{date_str}",
+    "\s\syear: #{year}",
+    "\s\smake: #{make}",
+    "\s\smodel: #{model}",
+    "\s\smileage: #{mileage}",
+    "\s\sprice: #{price}",
     '---',
     description
   ].join("\n")

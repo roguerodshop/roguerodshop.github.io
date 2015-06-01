@@ -1,11 +1,12 @@
 ---
 layout: post
 title:  1980 Chevy Pickup
-year: 1980
-make: Chevrolet
-model: Pickup
-date:   2015-05-28
 categories: projects_for_sale
+details:
+  year: 1980
+  make: Chevrolet
+  model: Pickup
+  date:   2015-05-28
 ---
 
 the post details go here

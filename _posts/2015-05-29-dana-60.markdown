@@ -1,12 +1,12 @@
 ---
 layout: post
+title: Dana 60 Front Axle
+categories: parts_for_sale
 details:
-  title:  Dana 60 Front Axle
   year: 1999
   make: Dodge
   model:
   date: 2015-05-28
-categories: parts_for_sale
 ---
 
 the post details go here

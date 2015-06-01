@@ -1,11 +1,12 @@
 ---
 layout: post
-title:  1950 Chevy Pickup
-year: 1950
-make: Chevrolet
-model: Pickup
-date:   2015-05-28
+title: 1950 Chevy Pickup
 categories: previous_projects
+details:
+  year: 1950
+  make: Chevrolet
+  model: Pickup
+  date: 2015-05-28
 ---
 
 the post details go here

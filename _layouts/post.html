@@ -18,8 +18,8 @@ layout: default
         {% endif %}
       {% endfor %}
     </ul>
-    {% for detail in post.details %}
-      <h6></h6>
+    {% for detail in page.details %}
+      <h4>{{ detail[0] | capitalize }}: {{ detail[1] }}</h4>
     {% endfor %}
     {{ content }}
   </article>

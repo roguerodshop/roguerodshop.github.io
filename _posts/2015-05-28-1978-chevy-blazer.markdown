@@ -1,11 +1,12 @@
 ---
 layout: post
-title:  1978 Chevy Blazer
-year: 1978
-make: Chevrolet
-model: Blazer
-date:   2015-05-28
+title: 1978 Chevy Blazer
 categories: current_projects
+details:
+  year: 1978
+  make: Chevrolet
+  model: Blazer
+  date: 2015-05-28
 ---
 
 the post details go here
