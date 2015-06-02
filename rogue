@@ -3,6 +3,7 @@
 # ln -s $HOME/rrs/rogue /usr/local/bin/rogue
 
 require 'colorize'
+require 'readline'
 
 HOME = %x(echo $HOME).chomp
 PROJECT_ROOT = HOME + '/rrs/'
@@ -18,38 +19,42 @@ selections = [
 puts 'What would you like to do?'
 selections.each_with_index { |s,i| puts "#{i+1}: #{s}" }
 
-selection = gets.chomp.to_i
+selection = Readline.readline("[#{'input'.colorize(:yellow)}]>> ").to_i
 
 def add_posting
-  details = { year: nil, make: nil, model: nil, mileage: nil, price: nil, categories: nil }
-  title = ask_question(:title,true)
-  dashed_title = title.gsub(/\s/,'-').gsub(/[^A-Za-z0-9_-]/,'').downcase
-  details.each do |question, _answer|
-    answer = ask_question(question,true)
+  info = {}
+  details = { year: nil, make: nil, model: nil, mileage: nil, price: nil }
+  info[:categories] = ask_question(:categories,true)
+  info[:title] = ask_question(:title,true)
+  info[:dashed_title] = info[:title].gsub(/\s/,'-').gsub(/[^A-Za-z0-9_-]/,'').downcase
+  details.each { |question, _answer| details[question] = ask_question(question,true) }
+  info[:details] = details
+  info[:description] = ask_question(:description)
+  proceed = [ask_question('Is all of the information above correct?[yes/no]')[0].downcase == 'y', ask_question('Are all of your photos staged? [yes/no]') == 'y']
+  if proceed?(proceed)
+    stage_photos(info[:dashed_title])
+    write_post(info)
+  else
+    puts 'Let\'s try that again.'
+    add_posting
   end
-  description = ask_question(:description)
-  ask_question('Is all of the information above correct and photos staged? [yes/no]')
-  puts details
-  # if gets.chomp.downcase[0] == 'y'
-  #   stage_photos(dashed_title)
-  #   write_post(title, details, description)
-  # else
-  #   add_posting
-  # end
+end
+
+def proceed?(arr)
+  arr.all?
 end
 
 def ask_question(question,confirm=false)
-  puts question.to_s.gsub('_',' ') << ':'
-  answer = validate(question, gets.chomp)
-  puts "\nFormatted to: #{answer.to_s.colorize(:red)}\n\n" if confirm && !answer.nil?
+  answer = validate(question, Readline.readline("[#{question.to_s.colorize(:yellow)}]>> "))
+  puts "\n#{"#{question}:".to_s.colorize(:green)} #{answer.to_s.colorize(:red)}\n\n" if confirm && !answer.nil?
   answer
 end
 
 def validate(question, answer)
-  if [:title].include? question
+  if [:title, :categories].include? question
     if answer.empty?
       puts "You need to have a #{question}"
-      ask_question(question)
+      return validate(question, Readline.readline("[#{question.to_s.colorize(:yellow)}]>> "))
     end
   else
     return nil if answer.empty?
@@ -83,10 +88,10 @@ def validate_categories(categories)
     attempted_categories.join(' ')
   else
     puts 'Your categories aren\'t valid.'
-    puts 'If you are using two or more categories, they must be seperated by a space'
+    puts 'If you are using two or more categories, they must be seperated by a comma'
     puts "Valid categories are: " + "#{valid_categories.join(', ').gsub('_', ' ')}".colorize(:green)
     puts 'Try again'
-    validate_categories(gets.chomp)
+    validate_categories(Readline.readline("[#{'categories'.colorize(:yellow)}]>> "))
   end
 end
 
@@ -98,26 +103,23 @@ def stage_photos(dashed_title)
   end
 end
 
-def write_post(title, details)
+def write_post(info)
   date_str = Time.now.strftime("%Y-%m-%d")
-  new_post = "#{PROJECT_ROOT}_posts/#{date_str}-#{dashed_title}.markdown"
+  new_post = "#{PROJECT_ROOT}_posts/#{date_str}-#{info[:dashed_title]}.markdown"
   content = [
     '---',
     'layout: post',
-    "categories: #{categories}",
-    "title: #{title}",
+    "categories: #{info[:categories]}",
+    "title: #{info[:title]}",
     'details:',
-    "\s\sdate: #{date_str}",
-    "\s\syear: #{year}",
-    "\s\smake: #{make}",
-    "\s\smodel: #{model}",
-    "\s\smileage: #{mileage}",
-    "\s\sprice: #{price}",
-    '---',
-    description
-  ].join("\n")
+    "\s\sdate: #{date_str}"
+  ]
+  info[:details].each {|k,v| content << "\s\s#{k}: #{v}" if v }
+  content << '---'
+  content << info[:description]
+  content_str = content.compact.join("\n")
   File.open(new_post, "w") do |file|
-    file.write(content)
+    file.write(content_str)
   end
 end
 
