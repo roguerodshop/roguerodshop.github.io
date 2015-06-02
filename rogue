@@ -7,6 +7,7 @@ require 'readline'
 
 HOME = %x(echo $HOME).chomp
 PROJECT_ROOT = HOME + '/rrs/'
+STAGING_DIR = HOME + '/Desktop/rrs_staging/'
 
 selections = [
   'Add a new post',
@@ -97,8 +98,7 @@ def valid_categories
 end
 
 def stage_photos(dashed_title)
-  staging_dir = HOME + '/Desktop/rrs_staging/'
-  Dir[staging_dir + '*'].each_with_index do |f,i|
+  Dir[STAGING_DIR + '*'].each_with_index do |f,i|
     ext = f.match(/(\..*)$/)
     File.rename(f, "#{PROJECT_ROOT}images/#{dashed_title}-#{i+1}#{ext}" )
   end
@@ -126,16 +126,20 @@ def write_post(info)
 end
 
 def posts_by_category(category)
+  matched_posts = []
   posts = Dir[PROJECT_ROOT + '_posts/*']
   posts.each do |post|
     match = false
-    File.readlines(post).each do |line|
-      match = true if line.match(/categories:\s*.*#{category}/)
+    matched_posts << File.readlines(post).each_with_object({}) do |line, hash|
       if match
-        puts post
+          md = line.match(/^(title|dashed_title):\s(.*)$/)
+          hash[md[1].to_sym] = md[2] if md
       end
+      match = true if line.match(/categories:\s*.*#{category}/)
     end
   end
+  matched_posts.delete({})
+  matched_posts
 end
 
 def remove_post
@@ -144,7 +148,17 @@ def remove_post
   categories.each_with_index { |c,i| puts "#{i+1}: #{c}" }
   category = categories[prompt('category', :yellow).to_i - 1]
   posts = posts_by_category(category)
-  post = post[prompt('post', :yellow).to_i - 1]
+  posts.each_with_index { |post, i| puts "#{i+1}: #{post[:title]}" }
+  post = posts[prompt('post', :yellow).to_i - 1]
+  delete_post(post[:dashed_title])
+end
+
+def delete_post(dashed_title)
+  to_be_deleted = Dir[PROJECT_ROOT + "images/*"]
+  to_be_deleted << Dir[PROJECT_ROOT + "_posts/*"]
+  to_be_deleted.flatten.each do |path|
+    File.delete(path) if path.match(dashed_title)
+  end
 end
 
 def prompt(value, color)
