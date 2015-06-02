@@ -16,10 +16,8 @@ selections = [
   'Deploy the website'
 ]
 
-puts 'What would you like to do?'
-selections.each_with_index { |s,i| puts "#{i+1}: #{s}" }
-
-selection = Readline.readline("[#{'input'.colorize(:yellow)}]>> ").to_i
+puts "\nWhat would you like to do?\n".colorize(:green)
+selections.each_with_index { |s,i| puts "#{i+1}: #{s.colorize(:light_blue)}" }
 
 def add_posting
   info = {}
@@ -78,11 +76,6 @@ def validate(question, answer)
 end
 
 def validate_categories(categories)
-  valid_categories = Dir[PROJECT_ROOT + '*'].map do |f|
-    md = f.match(/\d_(.*)\.md/)
-    md ? md[1] : nil
-  end.compact
-  valid_categories << 'unpublished'
   attempted_categories = categories.gsub(/,\s*/,',').split(',').map { |cat| cat.gsub(/\s/,'_') }
   if !attempted_categories.empty? && (valid_categories & attempted_categories).length == attempted_categories.length
     attempted_categories.join(' ')
@@ -93,6 +86,14 @@ def validate_categories(categories)
     puts 'Try again'
     validate_categories(Readline.readline("[#{'categories'.colorize(:yellow)}]>> "))
   end
+end
+
+def valid_categories
+  valid_categories = Dir[PROJECT_ROOT + '*'].map do |f|
+    md = f.match(/\d_(.*)\.md/)
+    md ? md[1] : nil
+  end.compact
+  valid_categories << 'unpublished'
 end
 
 def stage_photos(dashed_title)
@@ -111,6 +112,7 @@ def write_post(info)
     'layout: post',
     "categories: #{info[:categories]}",
     "title: #{info[:title]}",
+    "dashed_title: #{info[:dashed_title]}",
     'details:',
     "\s\sdate: #{date_str}"
   ]
@@ -123,8 +125,48 @@ def write_post(info)
   end
 end
 
-if selection == 1
-  add_posting
-elsif selection == 2
-elsif selection == 3
+def posts_by_category(category)
+  posts = Dir[PROJECT_ROOT + '_posts/*']
+  posts.each do |post|
+    match = false
+    File.readlines(post).each do |line|
+      match = true if line.match(/categories:\s*.*#{category}/)
+      if match
+        puts post
+      end
+    end
+  end
 end
+
+def remove_post
+  puts "\nWhat category is it listed under?\n".colorize(:green)
+  categories = valid_categories
+  categories.each_with_index { |c,i| puts "#{i+1}: #{c}" }
+  category = categories[prompt('category', :yellow).to_i - 1]
+  posts = posts_by_category(category)
+  post = post[prompt('post', :yellow).to_i - 1]
+end
+
+def prompt(value, color)
+  Readline.readline("\n[#{"#{value}".colorize(color)}]>> ")
+end
+
+
+def make_selection
+  selection = prompt('input', :yellow).to_i
+  case selection
+  when 1
+    add_posting
+  when 2
+  when 3
+    remove_post
+  when 4
+  when 5
+  else
+    puts "\nI don't understand, try again.\n"
+    make_selection
+  end
+end
+
+
+make_selection

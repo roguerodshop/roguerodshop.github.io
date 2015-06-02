@@ -1,7 +1,8 @@
 ---
 layout: post
-title:  1980 Chevy Pickup
 categories: projects_for_sale
+title: 1980 Chevy Pickup
+dashed_title: 1980-chevy-pickup
 details:
   year: 1980
   make: Chevrolet

@@ -1,7 +1,8 @@
 ---
 layout: post
-title: 1978 Chevy Blazer
 categories: current_projects
+title: 1978 Chevy Blazer
+dashed_title: 1978-chevy-blazer
 details:
   year: 1978
   make: Chevrolet

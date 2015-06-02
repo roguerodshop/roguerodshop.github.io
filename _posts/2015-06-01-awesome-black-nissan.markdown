@@ -2,6 +2,7 @@
 layout: post
 categories: projects_for_sale
 title: Awesome Black Nissan
+dashed_title: awesome-black-nissan
 details:
   date: 2015-06-01
   year: 2015

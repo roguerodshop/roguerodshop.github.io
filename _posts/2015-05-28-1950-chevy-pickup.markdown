@@ -1,7 +1,8 @@
 ---
 layout: post
-title: 1950 Chevy Pickup
 categories: previous_projects
+title: 1950 Chevy Pickup
+dashed_title: 1950-chevy-pickup
 details:
   year: 1950
   make: Chevrolet

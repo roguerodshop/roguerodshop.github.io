@@ -1,7 +1,8 @@
 ---
 layout: post
-title: Another Awesome Motorcycle!!!!!!
 categories: projects_for_sale parts_for_sale
+title: Another Awesome Motorcycle!!!!!!
+dashed_title: another-awesome-motorcycle
 details:
   year: 2011
   make: Triumph

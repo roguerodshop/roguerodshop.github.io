@@ -1,7 +1,8 @@
 ---
 layout: post
-title: Awsome Motorcycle!!!!
 categories: projects_for_sale
+title: Awsome Motorcycle!!!!
+dashed_title: awsome-motorcycle
 details:
   year: 2011
   make: no idea
