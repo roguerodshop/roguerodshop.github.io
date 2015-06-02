@@ -165,6 +165,12 @@ def prompt(value, color)
   Readline.readline("\n[#{"#{value}".colorize(color)}]>> ")
 end
 
+def deploy_site
+  %x(git -C #{PROJECT_ROOT} pull origin master)
+   %x(git -C #{PROJECT_ROOT} commit -am 'Rogue commit')
+  # %x(git push origin master)
+end
+
 
 def make_selection
   selection = prompt('input', :yellow).to_i
@@ -172,10 +178,13 @@ def make_selection
   when 1
     add_posting
   when 2
+    # edit a posting
   when 3
     remove_post
   when 4
+    # add or remove photos
   when 5
+    deploy_site
   else
     puts "\nI don't understand, try again.\n"
     make_selection
