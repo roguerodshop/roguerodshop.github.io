@@ -168,7 +168,7 @@ end
 def deploy_site
   %x(git -C #{PROJECT_ROOT} pull origin master)
    %x(git -C #{PROJECT_ROOT} commit -am 'Rogue commit')
-  # %x(git push origin master)
+   %x(git push origin master)
 end
 
 
