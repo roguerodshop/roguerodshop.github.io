@@ -1,0 +1,14 @@
+---
+layout: post
+categories: projects_for_sale
+title: 1980 Chevy Pickup
+dashed_title: 1980-chevy-pickup
+details:
+  date: 2015-06-09
+  year: 1980
+  make: Chevy
+  model: C10
+  mileage: 150 miles
+  price: $5,000
+---
+no description
