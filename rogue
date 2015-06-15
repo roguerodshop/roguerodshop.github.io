@@ -59,7 +59,7 @@ def validate(question, answer)
   else
     return nil if answer.empty?
   end
-  case question
+
   when :year
     return answer if answer.match(/^((20)|1(8|9))\d{2}(\.\d{1,2})?$/) && (answer.to_i <= Time.now.strftime('%Y').to_i + 2)
     puts 'That\'s not a valid date. Try agian.'
@@ -96,7 +96,7 @@ def valid_categories
     md ? md[1] : nil
   end.compact
   valid_categories << 'unpublished'
-end
+end 
 
 def stage_photos(dashed_title)
   Dir[STAGING_DIR + '*'].each_with_index do |f,i|
@@ -196,6 +196,5 @@ def make_selection
     make_selection
   end
 end
-
 
 make_selection
