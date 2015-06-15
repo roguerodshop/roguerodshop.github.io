@@ -18,10 +18,19 @@ layout: default
         {% endif %}
       {% endfor %}
     </ul>
+    {% for img in site.static_files %}
+      {% if img.path contains imgBasePath %}
+        {% assign id = img.path | remove: "/images/" | split: "." | first | append: "-modal" %}
+        <div id={{ id }} style="display: none;">
+          <img class='modal-image' src="{{ site.baseurl }}{{ img.path }}">
+        </div>
+      {% endif %}
+    {% endfor %}
     {% for detail in page.details %}
       <h4>{{ detail[0] | capitalize }}: {{ detail[1] }}</h4>
     {% endfor %}
     {{ content }}
   </article>
+
 
 </div>

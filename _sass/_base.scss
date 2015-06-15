@@ -64,7 +64,8 @@ figcaption {
  * Lists
  */
 ul, ol {
-    margin-left: $spacing-unit;
+    // removed due to effect on pgwSlideshow
+    // margin-left: $spacing-unit;
 }
 
 li {
