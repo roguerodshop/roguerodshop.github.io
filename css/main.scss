@@ -97,3 +97,9 @@ body {font-family: "Segoe UI", Tahoma, sans-serif;}
     width: 29%;
   }
 }
+
+@media (max-width: 590px) {
+  .contact li {
+    display: block;
+  }
+}
