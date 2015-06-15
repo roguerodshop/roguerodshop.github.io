@@ -23,7 +23,8 @@ selections.each_with_index { |s,i| puts "#{i+1}: #{s.colorize(:light_blue)}" }
 def add_posting
   info = {}
   details = { year: nil, make: nil, model: nil, mileage: nil, price: nil }
-  info[:categories] = ask_question(:categories,true)
+  puts "\n"
+  info[:categories] = select_categories
   info[:title] = ask_question(:title,true)
   info[:dashed_title] = info[:title].gsub(/\s/,'-').gsub(/[^A-Za-z0-9_-]/,'').downcase
   details.each { |question, _answer| details[question] = ask_question(question,true) }
@@ -142,13 +143,18 @@ def posts_by_category(category)
   matched_posts
 end
 
-def remove_post
-  puts "\nWhat category is it listed under?\n".colorize(:green)
+def select_categories
   categories = valid_categories
-  categories.each_with_index { |c,i| puts "#{i+1}: #{c}" }
-  category = categories[prompt('category', :yellow).to_i - 1]
+  categories.each_with_index { |c,i| puts "#{i+1}: #{c.colorize(:light_blue)}" }
+  prompt('category', :yellow).split(',').each_with_object([]) { |i,selected| selected << categories[i.to_i - 1] }
+end
+
+def remove_post
+  puts "\nWhat category is the post listed under?\n".colorize(:green)
+  category = select_categories.first
   posts = posts_by_category(category)
-  posts.each_with_index { |post, i| puts "#{i+1}: #{post[:title]}" }
+  puts "\nWhich post would you like to remove?\n".colorize(:green)
+  posts.each_with_index { |post, i| puts "#{i+1}: #{post[:title].colorize(:light_blue)}" }
   post = posts[prompt('post', :yellow).to_i - 1]
   delete_post(post[:dashed_title])
 end
@@ -193,4 +199,3 @@ end
 
 
 make_selection
-
