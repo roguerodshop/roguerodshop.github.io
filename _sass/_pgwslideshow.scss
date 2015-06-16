@@ -1,0 +1,187 @@
+//colors
+$color_mine_shaft_approx: #333;
+$white: #fff;
+$black_50: rgba(0, 0, 0, 0.5);
+$color_fuscous_gray_approx: #555;
+$color_tapa_approx: #777;
+
+.pgwSlideshow {
+  width: 100%;
+  background: $color_mine_shaft_approx;
+  display: none;
+  a {
+    color: $white;
+  }
+  .ps-current {
+    text-align: center;
+    position: relative;
+    min-height: 150px;
+    overflow: hidden;
+    .ps-prev {
+      background: $black_50;
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#99000000', endColorstr='#99000000');
+      border: 1px solid $color_tapa_approx;
+      border-left: 0;
+      //Instead of the line below you could use @includeborder-radius($radius, $vertical-radius)
+      border-radius: 0 4px 4px 0;
+      position: absolute;
+      padding: 20px 20px 20px 15px;
+      left: 0;
+      top: 45%;
+      cursor: pointer;
+    }
+    .ps-next {
+      background: $black_50;
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#99000000', endColorstr='#99000000');
+      border: 1px solid $color_tapa_approx;
+      border-right: 0;
+      //Instead of the line below you could use @includeborder-radius($radius, $vertical-radius)
+      border-radius: 4px 0 0 4px;
+      position: absolute;
+      padding: 20px 15px 20px 20px;
+      right: 0;
+      top: 45%;
+      cursor: pointer;
+    }
+    > ul > li {
+      text-align: center;
+      width: 100%;
+      z-index: 1;
+      opacity: 0;
+      display: block;
+      img {
+        display: block;
+        max-width: 100%;
+        margin: auto;
+      }
+    }
+  }
+  .ps-caption {
+    background: $black_50;
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#99000000', endColorstr='#99000000');
+    text-align: left;
+    font-size: 1rem;
+    color: $white;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 10px;
+    display: none;
+    span {
+      padding: 7px;
+      display: inline-block;
+    }
+  }
+  .ps-list {
+    border-top: 1px solid $color_fuscous_gray_approx;
+    //Instead of the line below you could use @includebox-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+    box-shadow: 0 10px 10px -5px $color_mine_shaft_approx inset;
+    background: $color_fuscous_gray_approx;
+    overflow: hidden;
+    position: relative;
+    ul {
+      position: relative;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      left: 0;
+    }
+    li {
+      float: left;
+      .ps-item {
+        display: block;
+        margin: 15px 8px;
+        opacity: 0.6;
+        filter: alpha(opacity=60);
+        &.ps-selected {
+          float: left;
+          opacity: 1;
+          border: 4px solid $white;
+          overflow: hidden;
+          img {
+            margin: -4px;
+          }
+        }
+      }
+      img {
+        display: block;
+        border: 1px solid $color_tapa_approx;
+        width: 80px;
+        height: 80px;
+      }
+    }
+    .ps-prev {
+      background: $black_50;
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#bb000000', endColorstr='#bb000000');
+      border: 1px solid $color_tapa_approx;
+      border-left: 0;
+      //Instead of the line below you could use @includeborder-radius($radius, $vertical-radius)
+      border-radius: 0 4px 4px 0;
+      padding: 20px 15px 20px 12px;
+      cursor: pointer;
+      position: absolute;
+      left: 0;
+      top: 25px;
+      z-index: 1000;
+      display: none;
+    }
+    .ps-next {
+      background: $black_50;
+      filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#bb000000', endColorstr='#bb000000');
+      border: 1px solid $color_tapa_approx;
+      border-right: 0;
+      //Instead of the line below you could use @includeborder-radius($radius, $vertical-radius)
+      border-radius: 4px 0 0 4px;
+      padding: 20px 12px 20px 15px;
+      cursor: pointer;
+      position: absolute;
+      right: 0;
+      top: 25px;
+      z-index: 1000;
+      display: none;
+    }
+  }
+  .ps-prevIcon {
+    border-color: transparent $white transparent;
+    border-style: solid;
+    border-width: 10px 10px 10px 0;
+    display: block;
+  }
+  .ps-nextIcon {
+    border-color: transparent $white transparent;
+    border-style: solid;
+    border-width: 10px 0 10px 10px;
+    display: block;
+  }
+  &.narrow {
+    .ps-list {
+      .ps-prev {
+        padding: 15px 12px 15px 10px;
+        top: 20px;
+      }
+      .ps-next {
+        padding: 15px 10px 15px 12px;
+        top: 20px;
+      }
+      li img {
+        width: 60px;
+        height: 60px;
+      }
+    }
+    .ps-current {
+      .ps-prev {
+        padding: 15px 15px 15px 12px;
+        top: 40%;
+      }
+      .ps-next {
+        padding: 15px 12px 15px 15px;
+        top: 40%;
+      }
+    }
+    .ps-caption {
+      font-size: 0.8rem;
+      padding: 8px;
+    }
+  }
+}

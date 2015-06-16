@@ -48,7 +48,9 @@ $on-laptop:        1000px;
 @import
         "base",
         "layout",
-        "syntax-highlighting"
+        "syntax-highlighting",
+        "pgwmodal",
+        "pgwslideshow"
 ;
 
 // footer contact info
@@ -85,6 +87,10 @@ body {font-family: "Segoe UI", Tahoma, sans-serif;}
   min-height: 1px;
   padding-right: 15px;
   padding-left: 15px;
+}
+
+.pm-body {
+  width: 95%;
 }
 
 .modal-image {

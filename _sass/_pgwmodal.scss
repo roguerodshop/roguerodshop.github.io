@@ -1,0 +1,86 @@
+//colors
+$black: #000;
+$white: #fff;
+$color_fuscous_gray_approx: #555;
+$mercury: #e5e5e5;
+$color_quill_gray_approx: #d5d5d5;
+
+//data-uris
+$data_uri_0: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwQAADsEBuJFr7QAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTFH80I3AAABIklEQVQ4T62T20oDQRBE+9EIGo1/H4gEQd8E74lJvKHiV+mmai7QNdu+ZFNwWKqmpzJhdq3rur0ShkMIwyGoMTsEl+AenDDw62WGmoAFOAcjWRdjdgX+Ck9gDPw6xbIN4MwvmEmHmFzCQRo+H0E6aRHL1sDP3EiHmLx5WQbrBv4Ic3+yuvYAxtIhJusUtKUf4LvJUhnQDm9SkNWe1MPsDhyD/v42SGEWT/oFfBl5BWFZ2huGWWfgB/gy8g7CVyrt7QVZLHsB//1lvoNhqZqstozPN/DZZPX2tUNMXFYvILr9dFLpEGO2KoNtWRVLezPSIcbsogyRWyC3WcTSZ8AZfnpT6RCDDx3MwTU4YuDXywzFUn6WU3Ag697sgzAcQhjuTmdbpLYNJt1Fr50AAAAASUVORK5CYII=";
+
+#pgwModalBackdrop {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9000;
+}
+#pgwModal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 9010;
+  overflow-x: auto;
+  overflow-y: scroll;
+  text-align: center;
+  .pm-container {
+    margin: 10px;
+  }
+  .pm-body {
+    display: inline-block;
+    max-width: 800px;
+    min-width: 300px;
+    position: relative;
+    width: 100%;
+    z-index: 9020;
+    margin-top: 10px;
+  }
+}
+.pgwModalBackdrop {
+  background: $black;
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+}
+.pgwModal {
+  .pm-body {
+    background-color: $white;
+    //Instead of the line below you could use @includeborder-radius($radius, $vertical-radius)
+    border-radius: 5px;
+    //Instead of the line below you could use @includebox-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10)
+    box-shadow: 0 0 5px 5px $color_fuscous_gray_approx;
+  }
+  .pm-title {
+    background: $mercury;
+    padding: 5px 0 6px;
+    border-bottom: 1px solid $color_quill_gray_approx;
+    //Instead of the line below you could use @includeborder-radius($radius, $vertical-radius)
+    border-radius: 5px 5px 0 0;
+    font-size: 1rem;
+    min-height: 25px;
+  }
+  .pm-content {
+    background: $white;
+    padding: 10px;
+    //Instead of the line below you could use @includeborder-radius($radius, $vertical-radius)
+    border-radius: 5px;
+    text-align: left;
+  }
+  .pm-close {
+    cursor: pointer;
+    position: absolute;
+    top: 9px;
+    right: 15px;
+    span.pm-icon {
+      background-image: url($data_uri_0);
+      display: block;
+      height: 20px;
+      width: 20px;
+    }
+  }
+}
+body.pgwModalOpen {
+  overflow: hidden;
+}
