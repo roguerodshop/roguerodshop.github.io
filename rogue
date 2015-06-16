@@ -20,7 +20,7 @@ selections = [
 puts "\nWhat would you like to do?\n".colorize(:green)
 selections.each_with_index { |s,i| puts "#{i+1}: #{s.colorize(:light_blue)}" }
 
-def add_posting
+def add_post
   info = {}
   details = { year: nil, make: nil, model: nil, mileage: nil, price: nil }
   puts "\n"
@@ -36,7 +36,7 @@ def add_posting
     write_post(info)
   else
     puts 'Let\'s try that again.'
-    add_posting
+    add_post
   end
 end
 
@@ -59,6 +59,7 @@ def validate(question, answer)
   else
     return nil if answer.empty?
   end
+
   case question
   when :year
     return answer if answer.match(/^((20)|1(8|9))\d{2}(\.\d{1,2})?$/) && (answer.to_i <= Time.now.strftime('%Y').to_i + 2)
@@ -149,22 +150,28 @@ def select_categories
   prompt('category', :yellow).split(',').each_with_object([]) { |i,selected| selected << categories[i.to_i - 1] }
 end
 
-def remove_post
+def edit_or_remove_post(edit_or_remove)
   puts "\nWhat category is the post listed under?\n".colorize(:green)
   category = select_categories.first
   posts = posts_by_category(category)
-  puts "\nWhich post would you like to remove?\n".colorize(:green)
+  puts "\nWhich post would you like to #{edit_or_remove}?\n".colorize(:green)
   posts.each_with_index { |post, i| puts "#{i+1}: #{post[:title].colorize(:light_blue)}" }
   post = posts[prompt('post', :yellow).to_i - 1]
-  delete_post(post[:dashed_title])
+  if edit_or_remove == 'remove'
+    delete_post(post[:dashed_title])
+  elsif edit_or_remove == 'edit'
+    edit_post(post[:dashed_title])
+  end
+end
+
+def edit_post(dashed_title)
+  puts Dir[PROJECT_ROOT + "_posts/*#{dashed_title}*"]
 end
 
 def delete_post(dashed_title)
-  to_be_deleted = Dir[PROJECT_ROOT + "images/*"]
-  to_be_deleted << Dir[PROJECT_ROOT + "_posts/*"]
-  to_be_deleted.flatten.each do |path|
-    File.delete(path) if path.match(dashed_title)
-  end
+  to_be_deleted = Dir[PROJECT_ROOT + "images/#{dashed_title}*"]
+  to_be_deleted << Dir[PROJECT_ROOT + "_posts/*#{dashed_title}*"]
+  to_be_deleted.flatten.each { |p| File.delete(p) }
 end
 
 def prompt(value, color)
@@ -182,11 +189,11 @@ def make_selection
   selection = prompt('input', :yellow).to_i
   case selection
   when 1
-    add_posting
+    add_post
   when 2
-    # edit a posting
+    edit_or_remove_post('edit')
   when 3
-    remove_post
+    edit_or_remove_post('remove')
   when 4
     # add or remove photos
   when 5
@@ -196,6 +203,5 @@ def make_selection
     make_selection
   end
 end
-
 
 make_selection
