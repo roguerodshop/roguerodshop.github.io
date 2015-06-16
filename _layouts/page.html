@@ -15,8 +15,8 @@ layout: default
     {% assign category = page.permalink | remove: "/" %}
     {% for post in site.posts %}
       {% if post.categories contains category %}
-        {% assign imgNameStart = "-1" | prepend: post.id | remove: post.dir | remove: "/" %}
-        {% assign imgBasePath = imgNameStart | prepend: "/images/" %}
+        {% assign imgNameStart = post.id | remove: post.dir | remove: "/" %}
+        {% assign imgBasePath = "/images/" | append: imgNameStart | append: "/" | append: imgNameStart | append: "-1" %}
         <div class="col-md-4 portfolio-item">
             <a href="{{ post.url | prepend: site.baseurl }}">
               {% for img in site.static_files %}

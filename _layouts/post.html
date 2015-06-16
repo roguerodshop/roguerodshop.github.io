@@ -8,9 +8,8 @@ layout: default
   </header>
 
   <article class="post-content">
-    {% assign imgNameStart = page.id | remove: page.dir | remove: "/" %}
-    {% assign imgBasePath = imgNameStart | prepend: "/images/" %}
-
+    {% assign imgDir = page.id | remove: page.dir | remove: "/" %}
+    {% assign imgBasePath = imgDir + imgNameStart | prepend: "/images/" %}
     <ul class="pgwSlideshow">
       {% for img in site.static_files %}
         {% if img.path contains imgBasePath %}
@@ -20,8 +19,8 @@ layout: default
     </ul>
     {% for img in site.static_files %}
       {% if img.path contains imgBasePath %}
-        {% assign id = img.path | remove: "/images/" | split: "." | first | append: "-modal" %}
-        <div id={{ id }} style="display: none;">
+        {% assign id = img.path | split: "/" | last | split: "." | first | append: "-modal" %}
+        <div id="{{ id }}" style="display: none;">
           <img class='modal-image' src="{{ site.baseurl }}{{ img.path }}">
         </div>
       {% endif %}
