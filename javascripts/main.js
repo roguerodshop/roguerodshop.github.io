@@ -16,27 +16,38 @@ $(document).ready(function() {
         $modalImage = $('.pm-container .pm-body .pm-content img')
 
         function adjustImageSize() {
-            var windowHeight = $(window).height(),
-                windowWidth = $(window).width(),
-                windowRatio = windowWidth / windowHeight,
-                imgHeight = $image.height(),
+
+            var imgHeight = $image.height(),
                 imgWidth = $image.width(),
-                imgRatio = imgWidth / imgHeight
-            if (windowRatio >= imgRatio) {
-                var imageContainerWidth = (windowHeight * 0.95 * imgRatio) + 20
-                $('.pm-body').css('width', imageContainerWidth)
-                $modalImage.addClass('over-square')
-            } else {
-                $('.pm-body').css('width', '95%')
-                $modalImage.removeClass('over-square')
+                imgRatio = imgWidth / imgHeight,
+                modalImgMinHeight = (280 / imgRatio) - 20
+
+            $modalImage.css('min-height', modalImgMinHeight)
+
+            function responsiveAdjustImageSize() {
+
+                var windowHeight = $(window).height(),
+                    windowWidth = $(window).width(),
+                    windowRatio = windowWidth / windowHeight
+
+                if (windowRatio >= imgRatio) {
+                    var imageContainerWidth = (windowHeight * 0.95 * imgRatio) + 20
+                    $modalImage.addClass('over-square')
+                } else {
+                    $modalImage.removeClass('over-square')
+                }
             }
+
+            $(window).resize(function() {
+                responsiveAdjustImageSize()
+            });
+
+            responsiveAdjustImageSize()
+
         }
 
         adjustImageSize()
 
-        $(window).resize(function() {
-            adjustImageSize()
-        });
 
     });
 

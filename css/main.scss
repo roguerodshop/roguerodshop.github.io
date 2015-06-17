@@ -77,10 +77,13 @@ body {font-family: "Segoe UI", Tahoma, sans-serif;}
     margin-bottom: 25px;
 }
 
+// Default Override
 .row {
   margin-right: -15px;
   margin-left: -15px;
 }
+
+// Bootstrap Override
 
 .col-md-4 {
   position: relative;
@@ -89,18 +92,27 @@ body {font-family: "Segoe UI", Tahoma, sans-serif;}
   padding-left: 15px;
 }
 
+// Modal Override
+
 .pm-body {
-  width: 95%;
+  width: auto;
 }
 
 .modal-image {
   width: 100%;
+  min-width: 280px;
+}
+
+#pgwModal .pm-body {
+  width: auto;
 }
 
 .over-square.modal-image {
   width: auto;
   height: 95vh;
 }
+
+// Media Queries
 
 @media (min-width: 700px) {
   .col-md-4 {
