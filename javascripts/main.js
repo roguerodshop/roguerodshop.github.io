@@ -28,14 +28,23 @@ $(document).ready(function() {
 
                 var windowHeight = $(window).height(),
                     windowWidth = $(window).width(),
-                    windowRatio = windowWidth / windowHeight
+                    windowRatio = windowWidth / windowHeight,
+                    marginTop = Math.round((windowHeight - $modalImage.height()) / 3);
+
+                if (marginTop <= 0) {
+                    marginTop = 0;
+                }
 
                 if (windowRatio >= imgRatio) {
                     $modalImage.addClass('over-square')
+                    $modalImage.css('height', windowHeight - 45)
                     $('.pm-body').addClass('over-square')
+                    $('.pm-body').css('margin-top', 2)
                 } else {
                     $modalImage.removeClass('over-square')
+                    $modalImage.css('height', 'auto')
                     $('.pm-body').removeClass('over-square')
+                    $('.pm-body').css('margin-top', marginTop)
                 }
             }
 
@@ -51,9 +60,5 @@ $(document).ready(function() {
 
 
     });
-
-
-
-
 
 });
