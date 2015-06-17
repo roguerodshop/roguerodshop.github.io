@@ -31,10 +31,11 @@ $(document).ready(function() {
                     windowRatio = windowWidth / windowHeight
 
                 if (windowRatio >= imgRatio) {
-                    var imageContainerWidth = (windowHeight * 0.95 * imgRatio) + 20
                     $modalImage.addClass('over-square')
+                    $('.pm-body').addClass('over-square')
                 } else {
                     $modalImage.removeClass('over-square')
+                    $('.pm-body').removeClass('over-square')
                 }
             }
 

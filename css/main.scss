@@ -104,6 +104,10 @@ body {font-family: "Segoe UI", Tahoma, sans-serif;}
 }
 
 #pgwModal .pm-body {
+  width: 100%;
+}
+
+#pgwModal .pm-body.over-square {
   width: auto;
 }
 
