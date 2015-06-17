@@ -4,6 +4,7 @@
 
 require 'colorize'
 require 'readline'
+require 'FileUtils'
 
 HOME = %x(echo $HOME).chomp
 PROJECT_ROOT = HOME + '/rrs/'
@@ -100,9 +101,11 @@ def valid_categories
 end
 
 def stage_photos(dashed_title)
+  img_dir = "#{PROJECT_ROOT}images/#{dashed_title}/"
+  FileUtils.mkdir_p(img_dir)
   Dir[STAGING_DIR + '*'].each_with_index do |f,i|
     ext = f.match(/(\..*)$/)
-    File.rename(f, "#{PROJECT_ROOT}images/#{dashed_title}-#{i+1}#{ext}" )
+    File.rename(f, "#{img_dir}/#{dashed_title}-#{i+1}#{ext}" )
   end
 end
 
@@ -169,9 +172,8 @@ def edit_post(dashed_title)
 end
 
 def delete_post(dashed_title)
-  to_be_deleted = Dir[PROJECT_ROOT + "images/#{dashed_title}*"]
-  to_be_deleted << Dir[PROJECT_ROOT + "_posts/*#{dashed_title}*"]
-  to_be_deleted.flatten.each { |p| File.delete(p) }
+  FileUtils.rm_rf(PROJECT_ROOT + "images/#{dashed_title}")
+  File.delete(Dir[PROJECT_ROOT + "_posts/*#{dashed_title}*"].first)
 end
 
 def prompt(value, color)
