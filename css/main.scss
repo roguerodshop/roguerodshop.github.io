@@ -97,6 +97,11 @@ body {font-family: "Segoe UI", Tahoma, sans-serif;}
   width: 100%;
 }
 
+.over-square.modal-image {
+  width: auto;
+  height: 95vh;
+}
+
 @media (min-width: 700px) {
   .col-md-4 {
     float: left;
