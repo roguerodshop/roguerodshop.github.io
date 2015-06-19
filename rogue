@@ -186,6 +186,9 @@ def deploy_site
    %x(git -C #{PROJECT_ROOT} push origin master)
 end
 
+def add_or_remove_photos
+end
+
 
 def make_selection
   selection = prompt('input', :yellow).to_i
@@ -197,7 +200,7 @@ def make_selection
   when 3
     edit_or_remove_post('remove')
   when 4
-    # add or remove photos
+    add_or_remove_photos
   when 5
     deploy_site
   else
