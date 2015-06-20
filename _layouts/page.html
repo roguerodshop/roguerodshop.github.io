@@ -11,29 +11,36 @@ layout: default
     {{ content }}
   </article>
 
-  <div class="row">
-    {% assign category = page.permalink | remove: "/" %}
-    {% for post in site.posts %}
-      {% if post.categories contains category %}
-        {% assign imgNameStart = post.id | remove: post.dir | remove: "/" %}
-        {% assign imgBasePath = "/images/" | append: imgNameStart | append: "/" | append: imgNameStart | append: "-1" %}
-        <div class="col-md-4 portfolio-item">
-            <a href="{{ post.url | prepend: site.baseurl }}">
-              {% for img in site.static_files %}
-                {% if img.path contains imgBasePath %}
-                  <img src="{{ site.baseurl }}{{ img.path }}">
-                {% endif %}
-              {% endfor %}
-            </a>
-            <h3>
-              <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-            </h3>
+  {% assign category = page.permalink | remove: "/" %}
+  {% assign loopindex = 0 %}
+  {% assign rowfinder = 0 %}
+  {% for post in site.posts %}
+    {% if post.categories contains category %}
+      {% if rowfinder == 0 %}
+        <div class="row">
+      {% endif %}
+      {% assign loopindex = loopindex | plus: 1 %}
+      {% assign rowfinder = loopindex | modulo: 3 %}
+      {% assign imgNameStart = post.id | remove: post.dir | remove: "/" %}
+      {% assign imgBasePath = "/images/" | append: imgNameStart | append: "/" | append: imgNameStart | append: "-1" %}
+      <div class="col-md-4 portfolio-item">
+          <a href="{{ post.url | prepend: site.baseurl }}">
+            {% for img in site.static_files %}
+              {% if img.path contains imgBasePath %}
+                <img src="{{ site.baseurl }}{{ img.path }}">
+              {% endif %}
+            {% endfor %}
+          </a>
+          <h3>
+            <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+          </h3>
+      </div>
+      {% if rowfinder == 0 %}
         </div>
       {% endif %}
-    {% endfor %}
-  </div>
-
+    {% endif %}
+  {% endfor %}
+  {% if rowfinder != 0 %}
+    </div>
+  {% endif %}
 </div>
-
-
-<!-- Projects Row -->
