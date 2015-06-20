@@ -10,16 +10,17 @@ HOME = %x(echo $HOME).chomp
 PROJECT_ROOT = HOME + '/rrs/'
 STAGING_DIR = HOME + '/Desktop/rrs_staging/'
 
-selections = [
-  'Add a new post',
-  'Edit an existing post',
-  'Remove an existing post',
-  'Add or remove photos from an existing post',
-  'Deploy the website'
-]
+def print_selections(question, selections, prompt)
+  puts "\n#{question}\n".colorize(:green)
+  selections.each_with_index { |s,i| puts "#{i + 1}: #{s.to_s.split('_').map(&:capitalize).join(' ').colorize(:light_blue)}" }
+  prompt(prompt, :yellow)
+end
 
-puts "\nWhat would you like to do?\n".colorize(:green)
-selections.each_with_index { |s,i| puts "#{i+1}: #{s.colorize(:light_blue)}" }
+def select_categories
+  index = print_selections('Select a category', valid_categories, 'category').to_i - 1
+  puts "\n"
+  valid_categories[index]
+end
 
 def add_post
   info = {}
@@ -31,18 +32,14 @@ def add_post
   details.each { |question, _answer| details[question] = ask_question(question,true) }
   info[:details] = details
   info[:description] = ask_question(:description)
-  proceed = [ask_question('Is all of the information above correct?[yes/no]')[0].downcase == 'y', ask_question('Are all of your photos staged? [yes/no]') == 'y']
-  if proceed?(proceed)
+  proceed = [ask_question('Is all of the information above correct?[yes/no]')[0].downcase == 'y', ask_question('Are all of your photos staged? [yes/no]')[0] == 'y']
+  if proceed.all?
     stage_photos(info[:dashed_title])
     write_post(info)
   else
-    puts 'Let\'s try that again.'
+    puts "\nLet's try that again."
     add_post
   end
-end
-
-def proceed?(arr)
-  arr.all?
 end
 
 def ask_question(question,confirm=false)
@@ -100,12 +97,25 @@ def valid_categories
   valid_categories << 'unpublished'
 end
 
+def imagemagick(file, percent)
+  %x(convert -strip -interlace Plane -gaussian-blur 0.05 -quality #{percent} #{file} #{file})
+end
+
 def stage_photos(dashed_title)
   img_dir = "#{PROJECT_ROOT}images/#{dashed_title}/"
   FileUtils.mkdir_p(img_dir)
+  puts 'Processing images, please wait...'
   Dir[STAGING_DIR + '*'].each_with_index do |f,i|
     ext = f.match(/(\..*)$/)
-    File.rename(f, "#{img_dir}/#{dashed_title}-#{i+1}#{ext}" )
+    file = "#{img_dir}/#{dashed_title}-#{i+1}#{ext}"
+    File.rename(f, file)
+    if File.stat(file).size > 3000000
+      imagemagick(file,'35%')
+    elsif File.stat(file).size > 2000000
+      imagemagick(file,'50%')
+    elsif File.stat(file).size > 1000000
+      imagemagick(file,'80%')
+    end
   end
 end
 
@@ -147,11 +157,6 @@ def posts_by_category(category)
   matched_posts
 end
 
-def select_categories
-  categories = valid_categories
-  categories.each_with_index { |c,i| puts "#{i+1}: #{c.colorize(:light_blue)}" }
-  prompt('category', :yellow).split(',').each_with_object([]) { |i,selected| selected << categories[i.to_i - 1] }
-end
 
 def edit_or_remove_post(edit_or_remove)
   puts "\nWhat category is the post listed under?\n".colorize(:green)
@@ -182,16 +187,29 @@ end
 
 def deploy_site
   %x(git -C #{PROJECT_ROOT} pull origin master)
-   %x(git -C #{PROJECT_ROOT} commit -am 'Rogue commit')
-   %x(git -C #{PROJECT_ROOT} push origin master)
+  %x(git -C #{PROJECT_ROOT} commit -am 'Rogue commit')
+  %x(git -C #{PROJECT_ROOT} push origin master)
 end
 
+
 def add_or_remove_photos
+  puts ''
 end
+
 
 
 def make_selection
-  selection = prompt('input', :yellow).to_i
+  selection = print_selections(
+    'What would you like to do?',
+    [
+      :add_a_new_post,
+      :edit_an_existing_post,
+      :remove_an_existing_post,
+      :add_or_remove_photos_from_an_existing_post,
+      :deploy_the_website
+    ],
+  'input'
+  ).to_i
   case selection
   when 1
     add_post
@@ -210,3 +228,4 @@ def make_selection
 end
 
 make_selection
+puts 'finished'
