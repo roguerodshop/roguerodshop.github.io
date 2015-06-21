@@ -1,12 +1,12 @@
 ---
 layout: post
 categories: projects_for_sale
-title: Awsome Motorcycle!!!!
-dashed_title: awsome-motorcycle
+title: Awesome Motorcycle!
+dashed_title: awesome-motorcycle
 details:
+  date: 2015-06-21
   year: 2011
   make: no idea
   model: custom
-  date: 2015-05-31
 ---
 This is a pretty cool looking motorcycle!
