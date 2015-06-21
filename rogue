@@ -13,7 +13,11 @@ STAGING_DIR = HOME + '/Desktop/rrs_staging/'
 def make_a_selection(question, selections, prompt)
   puts "\n#{question}\n".colorize(:green)
   selections.each_with_index { |s,i| puts "#{i + 1}: #{s.to_s.split('_').map(&:capitalize).join(' ').colorize(:light_blue)}" }
-  index = prompt(prompt, :yellow).to_i - 1
+  invalid_answer, index = true, nil
+  while invalid_answer do
+    index = prompt(prompt, :yellow).to_i - 1
+    invalid_answer = false if index != -1 && selections[index]
+  end
   puts "\n"
   selections[index]
 end
@@ -254,7 +258,8 @@ def make_selection
   when :add_or_remove_photos_from_an_existing_post
     add_or_remove_photos
   when :deploy_the_website
-    deploy_site
+    puts 'deploy site'
+    # deploy_site
   else
     puts "\nI don't understand, try again.\n"
     make_selection
