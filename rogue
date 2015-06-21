@@ -200,7 +200,7 @@ def edit_post(dashed_title)
     puts "The title is currently:\n\n#{info[:title].colorize(:red)}"
     title = prompt("new title")
     new_dashed_title = dashed_title(title)
-    old_image_dir = PROJECT_ROOT + "images/#{old_dashed_title}"
+    old_image_dir = PROJECT_ROOT + "images/#{old_dashed_title}/"
     stage_photos(new_dashed_title, old_image_dir)
     delete_post(old_dashed_title)
     info[:dashed_title] = new_dashed_title
