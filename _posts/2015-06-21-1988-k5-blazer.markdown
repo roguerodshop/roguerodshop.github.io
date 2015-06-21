@@ -10,3 +10,4 @@ details:
   model: K5 Blazer
   mileage: 100,000 miles
 ---
+It's a K5 Blazer
