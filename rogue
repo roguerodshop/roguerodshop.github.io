@@ -112,7 +112,6 @@ def stage_photos(dashed_title, source_dir=STAGING_DIR)
   img_dir = "#{PROJECT_ROOT}images/#{dashed_title}/"
   FileUtils.mkdir_p(img_dir)
   puts 'Processing images, please wait...'
-  require 'pry' ; binding.pry
   Dir[source_dir + '*'].each_with_index do |f,i|
     ext = f.match(/(\..*)$/)
     file = "#{img_dir}/#{dashed_title}-#{i+1}#{ext}"
@@ -176,20 +175,20 @@ def edit_or_remove_post(edit_or_remove)
 end
 
 def edit_post(dashed_title)
-  file = Dir[PROJECT_ROOT + "_posts/*#{dashed_title}.*"].first
+  file = Dir[PROJECT_ROOT + "_posts/*#{dashed_title}.markdown"].first
   details = false
   info = File.readlines(file).each_with_object({details: {}}) do |l, o|
-    if md = l.match(/(.*title):\s(.*)/)
-      o[:title] = md[2] if md[1] == 'title'
-      o[:dashed_title] = md[2] if md[1] == 'dashed_title'
-    end
-    if details and l[0..1] == '  '
+    if l.match(/^details:\s.*/)
+      details = true
+    elsif md = l.match(/^(\S*):\s(.*)/)
+      o[md[1].to_sym] = md[2]
+    elsif details and l[0..1] == '  '
       md = l.match(/^\s{2}(.*):\s(.*)/)
       o[:details][md[1].to_sym] = md[2] unless md[1] == 'date'
     else
+      o[:description] = l unless l == '---'
       details = false
     end
-    details = true if l.match(/details:\s(.*)/)
   end
   keys = (info.keys << info[:details].keys).flatten
   keys.delete(:details); keys.delete(:details)
@@ -203,6 +202,7 @@ def edit_post(dashed_title)
     old_image_dir = PROJECT_ROOT + "images/#{old_dashed_title}/"
     stage_photos(new_dashed_title, old_image_dir)
     delete_post(old_dashed_title)
+    info[:title] = title
     info[:dashed_title] = new_dashed_title
   elsif attribute == :add_attribute
     attribute_name = prompt('attribute name').gsub(' ', '_').downcase.to_sym
