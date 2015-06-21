@@ -4,10 +4,9 @@ categories: current_projects
 title: 1988 K5 Blazer
 dashed_title: 1988-k5-blazer
 details:
-  date: 2015-06-15
+  date: 2015-06-21
   year: 1988
   make: Chevy
   model: K5 Blazer
-  mileage: 120,000 miles
+  mileage: 100,000 miles
 ---
-No description

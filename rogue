@@ -116,7 +116,7 @@ def stage_photos(dashed_title, source_dir=STAGING_DIR)
     ext = f.match(/(\..*)$/)
     file = "#{img_dir}/#{dashed_title}-#{i+1}#{ext}"
     File.rename(f, file)
-    percent = 50000000 / File.stat(file).size
+    percent = 100000000 / File.stat(file).size
     if percent < 80 && source_dir == STAGING_DIR
       imagemagick(file,percent)
     end
