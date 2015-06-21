@@ -1,0 +1,13 @@
+---
+layout: post
+categories: projects_for_sale
+title: Merz 280se
+dashed_title: merz-280se
+details:
+  date: 2015-06-21
+  year: 1972
+  make: Mercedes
+  model: 280se
+  price: $5,500
+---
+Classic Mercedes Benz 280se 4.5 all original 

@@ -6,6 +6,7 @@ GEM
       timers (~> 4.0.0)
     classifier-reborn (2.0.3)
       fast-stemmer (~> 1.0)
+    coderay (1.1.0)
     coffee-script (2.4.1)
       coffee-script-source
       execjs
@@ -46,9 +47,14 @@ GEM
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
     mercenary (0.3.5)
+    method_source (0.8.2)
     parslet (1.5.0)
       blankslate (~> 2.0)
     posix-spawn (0.3.11)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     pygments.rb (0.6.3)
       posix-spawn (~> 0.3.6)
       yajl-ruby (~> 1.2.0)
@@ -57,9 +63,9 @@ GEM
       ffi (>= 0.5.0)
     rb-readline (0.5.3)
     redcarpet (3.3.1)
-    rmagick (2.15.2)
     safe_yaml (1.0.4)
     sass (3.4.14)
+    slop (3.6.0)
     timers (4.0.1)
       hitimes
     toml (0.1.2)
@@ -72,5 +78,5 @@ PLATFORMS
 DEPENDENCIES
   colorize
   jekyll
+  pry
   rb-readline
-  rmagick
