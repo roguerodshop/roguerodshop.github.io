@@ -24,11 +24,14 @@ def add_post
   puts "\n"
   info[:categories] = make_a_selection('Pick a category', valid_categories, 'category')
   info[:title] = ask_question(:title,true)
-  info[:dashed_title] = info[:title].gsub(/\s/,'-').gsub(/[^A-Za-z0-9_-]/,'').downcase
+  info[:dashed_title] = dashed_title(info[:title])
   details.each { |question, _answer| details[question] = ask_question(question,true) }
   info[:details] = details
   info[:description] = ask_question(:description)
-  proceed = [ask_question('Is all of the information above correct?[yes/no]')[0].downcase == 'y', ask_question('Are all of your photos staged? [yes/no]')[0] == 'y']
+  proceed = [
+    ask_question('Is all of the information above correct?[yes/no]')[0].downcase == 'y',
+    ask_question('Are all of your photos staged? [yes/no]')[0] == 'y'
+  ]
   if proceed.all?
     stage_photos(info[:dashed_title])
     write_post(info)
@@ -36,6 +39,10 @@ def add_post
     puts "\nLet's try that again."
     add_post
   end
+end
+
+def dashed_title(title)
+  title.gsub(/\s/,'-').gsub(/[^A-Za-z0-9_-]/,'').downcase
 end
 
 def ask_question(question,confirm=false)
@@ -94,30 +101,27 @@ def valid_categories
 end
 
 def imagemagick(file, percent)
-  %x(convert -strip -interlace Plane -gaussian-blur 0.05 -quality #{percent} #{file} #{file})
+  %x(convert -strip -interlace Plane -gaussian-blur 0.05 -quality #{percent}% #{file} #{file})
 end
 
-def stage_photos(dashed_title)
+def stage_photos(dashed_title, source_dir=STAGING_DIR)
   img_dir = "#{PROJECT_ROOT}images/#{dashed_title}/"
   FileUtils.mkdir_p(img_dir)
   puts 'Processing images, please wait...'
-  Dir[STAGING_DIR + '*'].each_with_index do |f,i|
+  Dir[source_dir + '*'].each_with_index do |f,i|
     ext = f.match(/(\..*)$/)
     file = "#{img_dir}/#{dashed_title}-#{i+1}#{ext}"
     File.rename(f, file)
-    if File.stat(file).size > 3000000
-      imagemagick(file,'35%')
-    elsif File.stat(file).size > 2000000
-      imagemagick(file,'50%')
-    elsif File.stat(file).size > 1000000
-      imagemagick(file,'80%')
+    percent = 50000000 / File.stat(file).size
+    if percent < 80 && source_dir == STAGING_DIR
+      imagemagick(file,percent)
     end
   end
 end
 
 def write_post(info)
   date_str = Time.now.strftime("%Y-%m-%d")
-  new_post = "#{PROJECT_ROOT}_posts/#{date_str}-#{info[:dashed_title]}.markdown"
+  new_post = "#{PROJECT_ROOT}_posts/#{ info[:details][:date] || date_str}-#{info[:dashed_title]}.markdown"
   content = [
     '---',
     'layout: post',
@@ -127,7 +131,7 @@ def write_post(info)
     'details:',
     "\s\sdate: #{date_str}"
   ]
-  info[:details].each {|k,v| content << "\s\s#{k}: #{v}" if v }
+  info[:details].each { |k,v| content << "\s\s#{k.to_s.gsub('_', ' ')}: #{v}" if v && (k != :date) }
   content << '---'
   content << info[:description]
   content_str = content.compact.join("\n")
@@ -157,24 +161,60 @@ end
 def edit_or_remove_post(edit_or_remove)
   category = make_a_selection('What category is the post listed under?', valid_categories, 'category')
   posts = posts_by_category(category)
-  post = make_a_selection("Which post would you like to #{edit_or_remove}?", posts.map { |p| p[:dashed_title] }, 'post')
+  post_title = make_a_selection("Which post would you like to #{edit_or_remove}?", posts.map { |p| p[:title] }, 'post')
+  post = posts.select { |h| h[:title] == post_title }.first
   if edit_or_remove == 'remove'
-    delete_post(post)
+    delete_post(post[:dashed_title])
   elsif edit_or_remove == 'edit'
-    edit_post(post)
+    edit_post(post[:dashed_title])
   end
 end
 
 def edit_post(dashed_title)
-  puts Dir[PROJECT_ROOT + "_posts/*#{dashed_title}*"]
+  file = Dir[PROJECT_ROOT + "_posts/*#{dashed_title}.*"].first
+  details = false
+  info = File.readlines(file).each_with_object({details: {}}) do |l, o|
+    if md = l.match(/(.*title):\s(.*)/)
+      o[:title] = md[2] if md[1] == 'title'
+      o[:dashed_title] = md[2] if md[1] == 'dashed_title'
+    end
+    if details and l[0..1] == '  '
+      md = l.match(/^\s{2}(.*):\s(.*)/)
+      o[:details][md[1].to_sym] = md[2] unless md[1] == 'date'
+    else
+      details = false
+    end
+    details = true if l.match(/details:\s(.*)/)
+  end
+  keys = (info.keys << info[:details].keys).flatten
+  keys.delete(:details); keys.delete(:details)
+  keys << :add_attribute
+  attribute = make_a_selection('What would you like to modify?', keys, 'attribute')
+  if attribute == :title
+    old_dashed_title = info[:dashed_title]
+    puts "The title is currently:\n\n#{info[:title].colorize(:red)}"
+    title = prompt("new title")
+    new_dashed_title = dashed_title(title)
+    old_image_dir = PROJECT_ROOT + "images/#{old_dashed_title}"
+    stage_photos(new_dashed_title, old_image_dir)
+    delete_post(old_dashed_title)
+    info[:dashed_title] = new_dashed_title
+  elsif attribute == :add_attribute
+    attribute_name = prompt('attribute name').gsub(' ', '_').downcase.to_sym
+    info[:details][attribute_name] = prompt('attribue value')
+  else
+    puts "The #{attribute.to_s.gsub('_', ' ')} is currently:\n\n#{info[attribute].colorize(:red) if info[:details][attribute]}"
+    info[:details][attribute] = prompt("new #{attribute}")
+  end
+  write_post(info)
 end
 
 def delete_post(dashed_title)
   FileUtils.rm_rf(PROJECT_ROOT + "images/#{dashed_title}")
-  File.delete(Dir[PROJECT_ROOT + "_posts/*#{dashed_title}*"].first)
+  File.delete(Dir[PROJECT_ROOT + "_posts/*#{dashed_title}.*"].first)
 end
 
-def prompt(value, color)
+def prompt(value, color=:yellow)
   Readline.readline("\n[#{"#{value}".colorize(color)}]>> ")
 end
 
