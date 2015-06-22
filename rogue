@@ -191,7 +191,8 @@ def edit_post(dashed_title)
     end
   end
   keys = (info.keys << info[:details].keys).flatten
-  keys.delete(:details); keys.delete(:details)
+  not_editable = [:details, :layout, :categories, :dashed_title]
+  keys -= not_editable
   keys << :add_attribute
   attribute = make_a_selection('What would you like to modify?', keys, 'attribute')
   if attribute == :title
@@ -206,11 +207,18 @@ def edit_post(dashed_title)
     info[:dashed_title] = new_dashed_title
   elsif attribute == :add_attribute
     attribute_name = prompt('attribute name').gsub(' ', '_').downcase.to_sym
-    info[:details][attribute_name] = prompt('attribue value')
+    info[:details][attribute_name] = prompt('attribute value')
   else
-    puts "The #{attribute.to_s.gsub('_', ' ')} is currently:\n\n#{info[attribute].colorize(:red) if info[:details][attribute]}"
-    info[:details][attribute] = prompt("new #{attribute}")
+    puts "The #{attribute.to_s.gsub('_', ' ')} is currently:\n\n#{info[:details][attribute].colorize(:red) if info[:details][attribute]}"
+    new_value = prompt("new #{attribute}")
+    if new_value.empty?
+      info[:details].delete(attribute)
+    else
+      info[:details][attribute] = new_value
+      puts "The #{attribute} is now: #{new_value}"
+    end
   end
+  puts info
   write_post(info)
 end
 
