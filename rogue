@@ -76,23 +76,8 @@ def validate(question, answer)
     "#{answer.gsub(/\.\d*/, '').gsub(/(k|k)/,'000').gsub(/\D/,'').reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse} miles"
   when :price
     "$#{answer.gsub(/\.\d*/, '').gsub(/\D/,'').reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse}"
-  when :categories
-    validate_categories(answer)
   else
     answer
-  end
-end
-
-def validate_categories(categories)
-  attempted_categories = categories.gsub(/,\s*/,',').split(',').map { |cat| cat.gsub(/\s/,'_') }
-  if !attempted_categories.empty? && (valid_categories & attempted_categories).length == attempted_categories.length
-    attempted_categories.join(' ')
-  else
-    puts 'Your categories aren\'t valid.'
-    puts 'If you are using two or more categories, they must be seperated by a comma'
-    puts "Valid categories are: " + "#{valid_categories.join(', ').gsub('_', ' ')}".colorize(:green)
-    puts 'Try again'
-    validate_categories(Readline.readline("[#{'categories'.colorize(:yellow)}]>> "))
   end
 end
 
