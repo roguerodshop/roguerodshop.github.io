@@ -231,10 +231,58 @@ def prompt(value, color=:yellow)
   Readline.readline("\n[#{"#{value}".colorize(color)}]>> ")
 end
 
+def jekyll_process_id
+  by_port = %x(lsof -i tcp:4000 -t).split("\n")
+  by_name = %x(ps -ef | awk '$8=="ruby" {print $2}').split("\n")
+  if by_port.empty? || by_name.empty?
+    ''
+  else
+    by_port & by_name
+  end
+end
+
+def preview_site
+  jekyll_running = true
+  jekyll = Thread.new { %x(cd #{PROJECT_ROOT}; bundle exec jekyll server); jekyll_running = false }
+  sleep 0.5
+  if jekyll_running
+    puts "Loading Jekyll...\nPress enter when done."
+    start_time = Time.now
+    while jekyll_process_id.empty?
+      sleep 0.2
+      if Time.now - start_time > 10
+        puts 'Jekyll timed out while loading. Try again.'
+        break
+      end
+    end
+    %x(open http://localhost:4000)
+    gets
+    Thread.kill(jekyll)
+    jekyll_process_id.each do |id|
+      Process.kill(:INT, id.to_i)
+    end
+  else
+    puts 'Error loading Jekyll, try again.'
+  end
+end
+
 def deploy_site
-  %x(git -C #{PROJECT_ROOT} pull origin master)
-  %x(git -C #{PROJECT_ROOT} commit -am 'Rogue commit')
-  %x(git -C #{PROJECT_ROOT} push origin master)
+  preview_site
+  if prompt('Does everything look accurate?')[0] == 'y'
+    if %x(git -C #{PROJECT_ROOT} pull origin master)
+      if %x(git -C #{PROJECT_ROOT} commit -am 'Rogue Commit: #{%x(git --no-pager diff --name-status)}')
+        if %x(git -C #{PROJECT_ROOT} push origin master)
+          puts 'success'
+        else
+          puts 'There was an issue trying to push your work to the remote'
+        end
+      else
+        puts 'There was an issue trying to commit your work.'
+      end
+    else
+      puts 'There was an issue trying to pull from the remore repository.'
+    end
+  end
 end
 
 
@@ -252,6 +300,7 @@ def make_selection
       :edit_an_existing_post,
       :remove_an_existing_post,
       :add_or_remove_photos_from_an_existing_post,
+      :preview_site,
       :deploy_the_website
     ],
   'input'
@@ -265,11 +314,17 @@ def make_selection
     edit_or_remove_post('remove')
   when :add_or_remove_photos_from_an_existing_post
     add_or_remove_photos
+  when :preview_site
+    preview_site
   when :deploy_the_website
-    puts 'deploy site'
-    # deploy_site
+    deploy_site
   else
     puts "\nI don't understand, try again.\n"
+    make_selection
+  end
+  puts 'Would you like to run anything else?'
+  run_again = prompt("yes/no")
+  if run_again[0] = 'y'
     make_selection
   end
 end
