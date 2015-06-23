@@ -34,10 +34,10 @@ def add_post
   info[:description] = ask_question(:description)
   proceed = [
     ask_question('Is all of the information above correct?[yes/no]')[0].downcase == 'y',
-    ask_question('Are all of your photos staged? [yes/no]')[0] == 'y'
+    ask_question('Are all of your images staged? [yes/no]')[0] == 'y'
   ]
   if proceed.all?
-    stage_photos(info[:dashed_title])
+    stage_images(info[:dashed_title])
     write_post(info)
   else
     puts "\nLet's try that again."
@@ -93,7 +93,7 @@ def imagemagick(file, percent)
   %x(convert -strip -interlace Plane -gaussian-blur 0.05 -quality #{percent}% #{file} #{file})
 end
 
-def stage_photos(dashed_title, source_dir=STAGING_DIR)
+def stage_images(dashed_title, source_dir=STAGING_DIR)
   img_dir = "#{PROJECT_ROOT}images/#{dashed_title}/"
   FileUtils.mkdir_p(img_dir)
   puts 'Processing images, please wait...'
@@ -156,8 +156,8 @@ def edit_or_remove_post(edit_or_remove)
     delete_post(post[:dashed_title])
   elsif edit_or_remove == 'edit'
     edit_post(post[:dashed_title])
-  elsif edit_or_remove == 'edit photos'
-    edit_photos(post[:dashed_title])
+  elsif edit_or_remove == 'edit images'
+    edit_images(post[:dashed_title])
   end
 end
 
@@ -188,7 +188,7 @@ def edit_post(dashed_title)
     title = prompt("new title")
     new_dashed_title = dashed_title(title)
     old_image_dir = PROJECT_ROOT + "images/#{old_dashed_title}/"
-    stage_photos(new_dashed_title, old_image_dir)
+    stage_images(new_dashed_title, old_image_dir)
     delete_post(old_dashed_title)
     info[:title] = title
     info[:dashed_title] = new_dashed_title
@@ -253,7 +253,7 @@ def preview_site
   end
 end
 
-def edit_photos(dashed_title)
+def edit_images(dashed_title)
   post_images = Dir[PROJECT_ROOT + "images/#{dashed_title}/*"]
   post_images.each_with_index do |f, i|
     ext = f.match(/(\..*)$/)
@@ -265,7 +265,7 @@ def edit_photos(dashed_title)
   puts 'Alphabetically rename the images in the order of how you want them to be on the website.'
   puts 'Press enter when you\'re finished.'
   gets
-  stage_photos(dashed_title)
+  stage_images(dashed_title)
 end
 
 def deploy_site
@@ -291,7 +291,7 @@ def reset_website
   puts 'Only use this if you\'ve messed something up beyond repair'
   if prompt('continue[yes/no]')[0] = 'y'
     %x(git -C #{PROJECT_ROOT} checkout -- .)
-    %x(git -C #{PROJECT_ROOT} reset --hard origin/master)
+    %x( git -C #{PROJECT_ROOT} reset --hard origin/master)
   end
 end
 
@@ -302,7 +302,7 @@ def make_selection
       :add_a_new_post,
       :edit_an_existing_post,
       :remove_an_existing_post,
-      :edit_photos,
+      :edit_images,
       :preview_site,
       :deploy_the_website,
       :reset_to_the_current_deployed_website
@@ -318,8 +318,8 @@ def make_selection
     edit_or_remove_post('remove')
   when :preview_site
     preview_site
-  when :edit_photos
-    edit_or_remove_post('edit photos')
+  when :edit_images
+    edit_or_remove_post('edit images')
   when :deploy_the_website
     deploy_site
   when :reset_to_the_current_deployed_website
