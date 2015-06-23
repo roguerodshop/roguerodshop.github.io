@@ -272,7 +272,7 @@ def deploy_site
   preview_site
   if prompt('Does everything look accurate?')[0] == 'y'
     if %x(git -C #{PROJECT_ROOT} pull origin master)
-      if %x(git -C #{PROJECT_ROOT} commit -am 'Rogue Commit: #{%x(git --no-pager diff --name-status)}')
+      if %x(git -C #{PROJECT_ROOT} commit -am 'Rogue Commit:\n#{%x(git --no-pager diff --name-status)}')
         if %x(git -C #{PROJECT_ROOT} push origin master)
           puts 'success'
         else
@@ -287,8 +287,13 @@ def deploy_site
   end
 end
 
-
-
+def reset_website
+  puts 'Only use this if you\'ve messed something up beyond repair'
+  if prompt('continue[yes/no]')[0] = 'y'
+    %x(git -C #{PROJECT_ROOT} checkout -- .)
+    %x(git -C #{PROJECT_ROOT} reset --hard origin/master)
+  end
+end
 
 def make_selection
   selection = make_a_selection(
@@ -299,7 +304,8 @@ def make_selection
       :remove_an_existing_post,
       :edit_photos,
       :preview_site,
-      :deploy_the_website
+      :deploy_the_website,
+      :reset_to_the_current_deployed_website
     ],
   'input'
   )
@@ -316,6 +322,8 @@ def make_selection
     edit_or_remove_post('edit photos')
   when :deploy_the_website
     deploy_site
+  when :reset_to_the_current_deployed_website
+    reset_website
   else
     puts "\nI don't understand, try again.\n"
     make_selection
