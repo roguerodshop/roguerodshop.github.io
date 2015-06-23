@@ -4,7 +4,6 @@
 
 require 'colorize'
 require 'readline'
-require 'FileUtils'
 
 HOME = %x(echo $HOME).chomp
 PROJECT_ROOT = HOME + '/rrs/'
@@ -76,23 +75,8 @@ def validate(question, answer)
     "#{answer.gsub(/\.\d*/, '').gsub(/(k|k)/,'000').gsub(/\D/,'').reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse} miles"
   when :price
     "$#{answer.gsub(/\.\d*/, '').gsub(/\D/,'').reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse}"
-  when :categories
-    validate_categories(answer)
   else
     answer
-  end
-end
-
-def validate_categories(categories)
-  attempted_categories = categories.gsub(/,\s*/,',').split(',').map { |cat| cat.gsub(/\s/,'_') }
-  if !attempted_categories.empty? && (valid_categories & attempted_categories).length == attempted_categories.length
-    attempted_categories.join(' ')
-  else
-    puts 'Your categories aren\'t valid.'
-    puts 'If you are using two or more categories, they must be seperated by a comma'
-    puts "Valid categories are: " + "#{valid_categories.join(', ').gsub('_', ' ')}".colorize(:green)
-    puts 'Try again'
-    validate_categories(Readline.readline("[#{'categories'.colorize(:yellow)}]>> "))
   end
 end
 
@@ -171,6 +155,8 @@ def edit_or_remove_post(edit_or_remove)
     delete_post(post[:dashed_title])
   elsif edit_or_remove == 'edit'
     edit_post(post[:dashed_title])
+  elsif edit_or_remove == 'edit photos'
+    edit_photos(post[:dashed_title])
   end
 end
 
@@ -264,6 +250,17 @@ def preview_site
   else
     puts 'Error loading Jekyll, try again.'
   end
+
+def edit_photos(dashed_title)
+  # Move photos to staging dir and open.
+  # allow new photos will be compressed while old photos will no be compressed
+  post_image_dir = Dir[PROJECT_ROOT + "images/#{dashed_title}/"].first
+  %x(open #{post_image_dir})
+  puts 'Images can be added or removed from the directory that just popped up.'
+  puts 'Alphabetically rename the images in the order of how you want them to be on the website.'
+  puts 'Press enter when you\'re finished.'
+  gets
+  post_images = Dir[post_image_dir + '*']
 end
 
 def deploy_site
@@ -286,10 +283,6 @@ def deploy_site
 end
 
 
-def add_or_remove_photos
-  puts ''
-end
-
 
 
 def make_selection
@@ -299,8 +292,8 @@ def make_selection
       :add_a_new_post,
       :edit_an_existing_post,
       :remove_an_existing_post,
-      :add_or_remove_photos_from_an_existing_post,
       :preview_site,
+      :edit_photos,
       :deploy_the_website
     ],
   'input'
@@ -312,10 +305,10 @@ def make_selection
     edit_or_remove_post('edit')
   when :remove_an_existing_post
     edit_or_remove_post('remove')
-  when :add_or_remove_photos_from_an_existing_post
-    add_or_remove_photos
   when :preview_site
     preview_site
+  when :edit_photos
+    edit_or_remove_post('edit photos')
   when :deploy_the_website
     deploy_site
   else
