@@ -250,11 +250,15 @@ def preview_site
   else
     puts 'Error loading Jekyll, try again.'
   end
+end
 
 def edit_photos(dashed_title)
-  # Move photos to staging dir and open.
-  # allow new photos will be compressed while old photos will no be compressed
-  post_image_dir = Dir[PROJECT_ROOT + "images/#{dashed_title}/"].first
+  post_images = Dir[PROJECT_ROOT + "images/#{dashed_title}/*"]
+  post_images.each_with_index do |f, i|
+    ext = f.match(/(\..*)$/)
+    staged_image = "#{STAGING_DIR}#{dashed_title}-#{i+1}#{ext}"
+    FileUtils.mv(f, staged_image)
+  end
   %x(open #{post_image_dir})
   puts 'Images can be added or removed from the directory that just popped up.'
   puts 'Alphabetically rename the images in the order of how you want them to be on the website.'
@@ -323,4 +327,3 @@ def make_selection
 end
 
 make_selection
-puts 'finished'
