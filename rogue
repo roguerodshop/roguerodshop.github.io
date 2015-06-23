@@ -291,6 +291,7 @@ def reset_website
   puts 'Only use this if you\'ve messed something up beyond repair'
   if prompt('continue[yes/no]')[0] = 'y'
     %x(git -C #{PROJECT_ROOT} checkout -- .)
+    %x(git -C #{PROJECT_ROOT} clean -f)
     %x( git -C #{PROJECT_ROOT} reset --hard origin/master)
   end
 end
