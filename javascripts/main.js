@@ -35,7 +35,7 @@ $(document).ready(function() {
                     marginTop = 0;
                 }
 
-                if (windowRatio >= (imgRatio * 0.9)) {
+                if (windowRatio >= (imgRatio * 0.98)) {
                     $modalImage.addClass('over-square')
                     $modalImage.css('height', windowHeight - 45)
                     $('.pm-body').addClass('over-square')
