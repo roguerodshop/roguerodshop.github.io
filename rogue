@@ -146,7 +146,6 @@ def posts_by_category(category)
   matched_posts
 end
 
-
 def edit_or_remove_post(edit_or_remove)
   category = make_a_selection('What category is the post listed under?', valid_categories, 'category')
   posts = posts_by_category(category)
@@ -253,11 +252,16 @@ def preview_site
   end
 end
 
+def make_img_staging_dir
+  FileUtils.mkdir_p(STAGING_DIR)
+end
+
 def edit_images(dashed_title)
   post_images = Dir[PROJECT_ROOT + "images/#{dashed_title}/*"]
   post_images.each_with_index do |f, i|
     ext = f.match(/(\..*)$/)
     staged_image = "#{STAGING_DIR}#{dashed_title}-#{i+1}#{ext}"
+    make_img_staging_dir
     FileUtils.mv(f, staged_image)
   end
   %x(open #{STAGING_DIR})
