@@ -4,7 +4,7 @@
 
 require 'colorize'
 require 'readline'
-require 'FileUtils'
+require 'fileutils'
 
 HOME = %x(echo $HOME).chomp
 PROJECT_ROOT = HOME + '/rrs/'
