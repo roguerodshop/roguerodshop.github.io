@@ -5,6 +5,7 @@
 require 'colorize'
 require 'readline'
 require 'fileutils'
+require 'launchy'
 
 HOME = %x(echo $HOME).chomp
 PROJECT_ROOT = HOME + '/rrs/'
@@ -241,7 +242,7 @@ def preview_site
         break
       end
     end
-    %x(open http://localhost:4000)
+    Launchy.open('http://localhost:4000')
     gets
     Thread.kill(jekyll)
     jekyll_process_id.each do |id|
@@ -264,7 +265,7 @@ def edit_images(dashed_title)
     make_img_staging_dir
     FileUtils.mv(f, staged_image)
   end
-  %x(open #{STAGING_DIR})
+  Launchy.open(STAGING_DIR)
   puts 'Images can be added or removed from the directory that just opened.'
   puts 'Alphabetically rename the images in the order of how you want them to be on the website.'
   puts 'Press enter when you\'re finished.'
