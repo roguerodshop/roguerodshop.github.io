@@ -98,7 +98,7 @@ def stage_images(dashed_title, source_dir=STAGING_DIR)
   img_dir = "#{PROJECT_ROOT}images/#{dashed_title}/"
   FileUtils.mkdir_p(img_dir)
   puts 'Processing images, please wait...'
-  Dir[source_dir + '*'].each_with_index do |f,i|
+  Dir[source_dir + '*'].sort.each_with_index do |f,i|
     ext = f.match(/(\..*)$/)
     file = "#{img_dir}/#{dashed_title}-#{i+1}#{ext}"
     File.rename(f, file)
