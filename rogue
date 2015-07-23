@@ -1,15 +1,35 @@
 #!/usr/bin/env ruby
 
 # ln -s $HOME/rrs/rogue /usr/local/bin/rogue
+HOME = "#{%x(echo $HOME).chomp}/"
+PROJECT_ROOT = HOME + 'rrs/'
+STAGING_DIR = HOME + 'Desktop/rrs_staging/'
 
-require 'colorize'
-require 'readline'
-require 'fileutils'
-require 'launchy'
 
-HOME = %x(echo $HOME).chomp
-PROJECT_ROOT = HOME + '/rrs/'
-STAGING_DIR = HOME + '/Desktop/rrs_staging/'
+
+def require_gems
+  gems = %w[
+    colorize
+    fastimage
+    launchy
+  ]
+  gems.each do |g|
+    begin
+      gem g
+    rescue LoadError
+      puts 'Updating Dependencies...'
+      %x(gem install #{g})
+    end
+  end
+  Gem.clear_paths
+  gems.each do |g|
+    require g
+  end
+  # ruby libraries
+  require 'fileutils'
+  require 'readline'
+end
+
 
 def make_a_selection(question, selections, prompt)
   puts "\n#{question}\n".colorize(:green)
@@ -90,8 +110,12 @@ def valid_categories
   valid_categories << 'unpublished'
 end
 
-def imagemagick(file, percent)
-  %x(convert -strip -interlace Plane -gaussian-blur 0.05 -quality #{percent}% #{file} #{file})
+def imagemagick(file)
+  if File.stat(file).size > 409060 # bytes
+    image_pixels = FastImage.size(file).inject(:*)
+    scale = image_pixels > 900000 ? "-scale #{100*900000/image_pixels}% " : ''
+    %x(mogrify -define jpeg:extent=400kb #{scale}#{file})
+  end
 end
 
 def stage_images(dashed_title, source_dir=STAGING_DIR)
@@ -102,10 +126,7 @@ def stage_images(dashed_title, source_dir=STAGING_DIR)
     ext = f.match(/(\..*)$/)
     file = "#{img_dir}/#{dashed_title}-#{i+1}#{ext}"
     File.rename(f, file)
-    percent = 100000000 / File.stat(file).size
-    if percent < 80 && source_dir == STAGING_DIR
-      imagemagick(file,percent)
-    end
+    imagemagick(file)
   end
 end
 
@@ -341,4 +362,5 @@ def make_selection
   end
 end
 
+require_gems
 make_selection
