@@ -15,15 +15,13 @@ def require_gems
   ]
   gems.each do |g|
     begin
-      gem g
+      require g
     rescue LoadError
-      puts 'Updating Dependencies...'
+      puts "Installing #{g}"
       %x(gem install #{g})
+      Gem.clear_paths
+      require g
     end
-  end
-  Gem.clear_paths
-  gems.each do |g|
-    require g
   end
   # ruby libraries
   require 'fileutils'
@@ -241,11 +239,10 @@ end
 
 def jekyll_process_id
   by_port = %x(lsof -i tcp:4000 -t).split("\n")
-  by_name = %x(ps -ef | awk '$8=="ruby" {print $2}').split("\n")
-  if by_port.empty? || by_name.empty?
+  if by_port.empty?
     ''
   else
-    by_port & by_name
+    by_port
   end
 end
 
@@ -322,6 +319,12 @@ def reset_website
   end
 end
 
+def make_another_selection?
+  puts 'Would you like to run anything else?'
+  run_again = prompt("yes/no")
+  true if run_again[0] == 'y'
+end
+
 def make_selection
   selection = make_a_selection(
     'What would you like to do?',
@@ -355,11 +358,7 @@ def make_selection
     puts "\nI don't understand, try again.\n"
     make_selection
   end
-  puts 'Would you like to run anything else?'
-  run_again = prompt("yes/no")
-  if run_again[0] == 'y'
-    make_selection
-  end
+  make_selection if make_another_selection?
 end
 
 require_gems
