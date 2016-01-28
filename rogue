@@ -4,7 +4,7 @@
 HOME = "#{%x(echo $HOME).chomp}/"
 PROJECT_ROOT = HOME + 'rrs/'
 STAGING_DIR = HOME + 'Desktop/rrs_staging/'
-
+OS = RUBY_PLATFORM.match('darwin') ? 'OSX' : 'LINUX'
 
 
 def require_gems
@@ -26,6 +26,12 @@ def require_gems
   # ruby libraries
   require 'fileutils'
   require 'readline'
+end
+
+def git_pull?
+  if OS == 'LINUX'
+    %x(stat -c %Y #{PROJECT_ROOT}.git/FETCH_HEAD).chomp
+  end
 end
 
 
@@ -362,4 +368,5 @@ def make_selection
 end
 
 require_gems
+git_pull?
 make_selection
