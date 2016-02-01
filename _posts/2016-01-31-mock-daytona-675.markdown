@@ -1,14 +1,14 @@
 ---
 layout: post
 categories: projects_for_sale parts_for_sale
-title: Another Awesome Motorcycle!!!!!!
-dashed_title: another-awesome-motorcycle
+title: Mock Daytona 675
+dashed_title: mock-daytona-675
 details:
+  date: 2016-01-31
   year: 2011
   make: Triumph
   model: Daytona 675
   mileage: 20000
   price: 10000
-  date: 2015-05-31
 ---
-This is a super cool bike, buy it man!!!!
+Mock description for motorcycle

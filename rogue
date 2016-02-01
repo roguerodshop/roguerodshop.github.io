@@ -28,7 +28,7 @@ def require_gems
   require 'readline'
 end
 
-def git_pull?
+def perform_git_pull_if_linux
   if OS == 'LINUX'
     %x(stat -c %Y #{PROJECT_ROOT}.git/FETCH_HEAD).chomp
   end
@@ -207,16 +207,20 @@ def edit_post(dashed_title)
   keys -= not_editable
   keys << :add_attribute
   attribute = make_a_selection('What would you like to modify?', keys, 'attribute')
+
+  old_dashed_title = info[:dashed_title].dup
   if attribute == :title
-    old_dashed_title = info[:dashed_title]
     puts "The title is currently:\n\n#{info[:title].colorize(:red)}"
-    title = prompt("new title")
+    title = prompt('new title')
     new_dashed_title = dashed_title(title)
     old_image_dir = PROJECT_ROOT + "images/#{old_dashed_title}/"
     stage_images(new_dashed_title, old_image_dir)
-    delete_post(old_dashed_title)
     info[:title] = title
     info[:dashed_title] = new_dashed_title
+  elsif attribute == :description
+    puts "The description is currently:\n\n#{info[:description].colorize(:red)}"
+    description = prompt('new description')
+    info[:description] = description
   elsif attribute == :add_attribute
     attribute_name = prompt('attribute name').gsub(' ', '_').downcase.to_sym
     info[:details][attribute_name] = prompt('attribute value')
@@ -230,12 +234,13 @@ def edit_post(dashed_title)
       puts "The #{attribute} is now: #{new_value}"
     end
   end
+  delete_post(old_dashed_title, delete_images: false)
   puts info
   write_post(info)
 end
 
-def delete_post(dashed_title)
-  FileUtils.rm_rf(PROJECT_ROOT + "images/#{dashed_title}")
+def delete_post(dashed_title, delete_images: true)
+  FileUtils.rm_rf(PROJECT_ROOT + "images/#{dashed_title}") if delete_images
   File.delete(Dir[PROJECT_ROOT + "_posts/*#{dashed_title}.*"].first)
 end
 
@@ -368,5 +373,5 @@ def make_selection
 end
 
 require_gems
-git_pull?
+perform_git_pull_if_linux
 make_selection
