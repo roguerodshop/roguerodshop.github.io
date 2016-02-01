@@ -1,10 +1,10 @@
 ---
 layout: post
 categories: projects_for_sale
-title: Awesome Motorcycle!
-dashed_title: awesome-motorcycle
+title: Second mock motorcycle
+dashed_title: second-mock-motorcycle
 details:
-  date: 2015-06-21
+  date: 2016-01-31
   year: 2011
   make: no idea
   model: custom

@@ -12,6 +12,7 @@ def require_gems
     colorize
     fastimage
     launchy
+    pry
   ]
   gems.each do |g|
     begin
@@ -189,7 +190,7 @@ end
 def edit_post(dashed_title)
   file = Dir[PROJECT_ROOT + "_posts/*#{dashed_title}.markdown"].first
   details = false
-  info = File.readlines(file).each_with_object({details: {}}) do |l, o|
+  info = File.readlines(file).each_with_object({ details: {} }) do |l, o|
     if l.match(/^details:\s.*/)
       details = true
     elsif md = l.match(/^(\S*):\s(.*)/)
