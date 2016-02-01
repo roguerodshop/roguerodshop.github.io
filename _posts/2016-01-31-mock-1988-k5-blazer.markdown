@@ -1,0 +1,13 @@
+---
+layout: post
+categories: current_projects
+title: Mock 1988 K5 Blazer
+dashed_title: mock-1988-k5-blazer
+details:
+  date: 2016-01-31
+  year: 1988
+  make: Chevy
+  model: K5 Blazer
+  mileage: 100,000 miles
+---
+It's a K5 Blazer

@@ -1,0 +1,14 @@
+---
+layout: post
+categories: projects_for_sale
+title: Mock 1956 Jeep
+dashed_title: mock-1956-jeep
+details:
+  date: 2016-01-31
+  year: 1956
+  make: Jeep
+  model: Pickup
+  mileage: 100,000 miles
+  price: $200
+---
+no description
